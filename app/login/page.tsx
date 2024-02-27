@@ -24,7 +24,7 @@ export default function Login({
       return redirect("/login?message=Could not authenticate user");
     }
 
-    return redirect("/");
+    return redirect("/vacataire/offres");
   };
 
   const signUp = async (formData: FormData) => {
@@ -83,11 +83,11 @@ export default function Login({
         <input
           className="rounded-md px-4 py-2 bg-inherit border mb-6"
           name="email"
-          placeholder="you@example.com"
+          placeholder="email@exemple.com"
           required
         />
         <label className="text-md" htmlFor="password">
-          Password
+          Mot de passe
         </label>
         <input
           className="rounded-md px-4 py-2 bg-inherit border mb-6"
@@ -96,11 +96,10 @@ export default function Login({
           placeholder="••••••••"
           required
         />
-        <button className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2">
+        <button className="bg-gray-700 rounded-md px-4 py-2 text-foreground mb-2 text-white">
           Sign In
         </button>
         <button
-          formAction={signUp}
           className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"
         >
           Sign Up
