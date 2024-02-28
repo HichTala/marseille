@@ -7,6 +7,7 @@ import Image from "next/image";
 import {createClient} from "@/utils/supabase/server";
 import {createServerComponentClient} from "@supabase/auth-helpers-nextjs";
 import {cookies} from "next/headers";
+import {Suspense} from "react";
 
 export default async function Page({
     searchParams,
@@ -38,10 +39,11 @@ export default async function Page({
                     <h1 className="text-2xl">Offres</h1>
                 </div>
                 <div className="mt-4 flex items-center justify-between md:mt-8 space-x-5">
-                    <Search placeholder="Rechercher piscine..."/>
-                    <List placeholder="Diplômes..." list="fonction"/>
-                    <DatePicker/>
-
+                    <Suspense>
+                        <Search placeholder="Rechercher piscine..."/>
+                        <List placeholder="Diplômes..." list="fonction"/>
+                        <DatePicker/>
+                    </Suspense>
                     <div className="flex h-10 items-center rounded-lg px-4 text-sm font-medium">
                         <FontAwesomeIcon icon={faFilter} height={25}/>
                     </div>
