@@ -8,15 +8,29 @@ import {createClient} from "@/utils/supabase/server";
 import {createServerComponentClient} from "@supabase/auth-helpers-nextjs";
 import {cookies} from "next/headers";
 
-export default async function Page() {
+export default async function Page({
+    searchParams,
+                                   }:{
+    searchParams?: {
+        piscine?: string;
+        certificate?: string;
+        date?: Date;
+        page?: string;
+    };
+}) {
     const supabase = createServerComponentClient({cookies})
-    const {data: {user}} = await supabase.auth.getUser()
+    const {data: vacataire} = await supabase.from("vacataire").select()
+
+    const piscine = searchParams?.piscine || '';
+    const certificate = searchParams?.certificate || '';
+    const date = searchParams?.date || null;
+    const currentPage = searchParams?.page || 1;
 
     return (
         <div className="w-full">
             <nav className={`w-full flex border-b border-b-foreground/10 h-16 relative ${styles.navbar}`}>
                 <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
-                    {user?.id}
+                    {vacataire?.at(0)['nom']} {vacataire?.at(0)['prenom']}
                 </div>
             </nav>
             <div className="w-full p-12">
@@ -32,7 +46,7 @@ export default async function Page() {
                         <FontAwesomeIcon icon={faFilter} height={25}/>
                     </div>
                 </div>
-                <Table/>
+                <Table piscine={piscine} certificate={certificate} date={date}/>
             </div>
 
         </div>
