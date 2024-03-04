@@ -1,5 +1,5 @@
-import MissionsWrapper from "@/app/ui/missions/missions";
-import Calendar from "@/app/ui/missions/calendar";
+import MissionsWrapper from "@/app/ui/missions";
+import Calendar from "@/app/ui/calendar";
 import Search, {DatePicker, List, Place} from "@/app/ui/search";
 import {Suspense} from "react";
 

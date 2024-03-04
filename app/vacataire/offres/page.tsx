@@ -1,13 +1,14 @@
 import Search, {DatePicker, List} from "@/app/ui/search";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFilter} from "@fortawesome/free-solid-svg-icons";
-import Table from "@/app/ui/dashboard/table";
+import Table from "@/app/ui/table";
 import styles from "@/app/ui/home.module.css";
 import Image from "next/image";
 import {createClient} from "@/utils/supabase/server";
 import {createServerComponentClient} from "@supabase/auth-helpers-nextjs";
 import {cookies} from "next/headers";
 import {Suspense} from "react";
+import {Details} from "@/app/ui/details";
 
 export default async function Page({
     searchParams,
@@ -30,7 +31,7 @@ export default async function Page({
     return (
         <div className="w-full">
             <nav className={`w-full flex border-b border-b-foreground/10 h-16 relative ${styles.navbar}`}>
-                <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
+                <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm text-white">
                     {vacataire?.at(0)['nom']} {vacataire?.at(0)['prenom']}
                 </div>
             </nav>
@@ -38,7 +39,7 @@ export default async function Page({
                 <div className="flex w-full items-center justify-between">
                     <h1 className="text-2xl">Offres</h1>
                 </div>
-                <div className="mt-4 flex items-center justify-between md:mt-8 space-x-5">
+                <div className="mt-4 flex items-center justify-between md:mt-8 space-x-5 sm:grid-cols-1 lg:grid-cols-4">
                     <Suspense>
                         <Search placeholder="Rechercher piscine..."/>
                         <List placeholder="Diplômes..." list="fonction"/>

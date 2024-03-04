@@ -1,5 +1,6 @@
 import {createServerComponentClient} from "@supabase/auth-helpers-nextjs";
 import {cookies} from "next/headers";
+import Link from "next/link";
 
 export default async function Table({
                                         piscine,
@@ -51,6 +52,13 @@ export default async function Table({
                                             className="text-gray-500 text-sm">Durée: </p>  {offer.duration}</div>
                                     </div>
                                 </div>
+
+                                <Link
+                                    href={`/vacataire/offres/${offer.id}/apply`}
+                                    className="bg-green-300 rounded-md px-1 py-1 text-foreground text-white"
+                                >
+                                    Postuler
+                                </Link>
                             </div>
                         ))}
                     </div>
@@ -100,6 +108,14 @@ export default async function Table({
                                 </td>
                                 <td className="whitespace-nowrap py-3 pl-6 pr-3">
                                     {offer.duration}
+                                </td>
+                                <td>
+                                    <Link
+                                        href={`/vacataire/offres/${offer.id}/apply`}
+                                        className="bg-green-300 rounded-md px-1 py-1 text-foreground text-white"
+                                    >
+                                        Postuler
+                                    </Link>
                                 </td>
                             </tr>
                         ))}
