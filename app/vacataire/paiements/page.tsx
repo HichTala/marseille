@@ -5,6 +5,7 @@ import {cookies} from "next/headers";
 import styles from "@/app/ui/home.module.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCalendar, faEnvelope, faHandshake, faMoneyBill, faStar} from "@fortawesome/free-solid-svg-icons";
+import Image from "next/image";
 
 export default async function Page(){
 
@@ -22,8 +23,8 @@ export default async function Page(){
                     <ul className="px-2 text-gray-400 font-bold text-xs flex mr-0 ml-auto">
                         <li className="px-2"><a href="/vacataire/offres">OFFRES</a></li>
                         <li className="px-2"><a href="/vacataire/propositions">PROPOSITION</a></li>
-                        <li className="px-2 text-white"><a href="/vacataire/missions">MISSIONS</a></li>
-                        <li className="px-2"><a href="/vacataire/paiements">PAIEMENTS</a></li>
+                        <li className="px-2"><a href="/vacataire/missions">MISSIONS</a></li>
+                        <li className="px-2 text-white"><a href="">PAIEMENTS</a></li>
                         <li className="px-2"><a href="">NOTES</a></li>
                     </ul>
                 </div>
@@ -39,19 +40,12 @@ export default async function Page(){
                 </div>
             </nav>
 
-            <div className="w-full p-12">
-                <div className="flex w-full items-center justify-between mb-5">
-                    <h1 className="text-2xl">Prochaines Missions</h1>
-                </div>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                    <MissionsWrapper/>
-                </div>
-
-                <div className="flex w-full items-center justify-between mb-5 mt-5">
-                    <h1 className="text-2xl">Calendriers</h1>
-                </div>
-                <Calendar/>
+            <div className="w-full pt-12">
+                <Image className="ml-auto mr-auto" src="/courbe_ex.png" alt="courbes" width={699} height={505}/>
             </div>
+
+
+
 
         </div>
     )
