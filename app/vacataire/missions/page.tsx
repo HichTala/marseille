@@ -18,23 +18,13 @@ export default async function Page(){
                     {vacataire?.at(0)['nom']} {vacataire?.at(0)['prenom']}
                 </div>
 
-                <div className="hidden flex-1 items-center md:flex">
+                <div className="flex flex-1 items-center">
                     <ul className="px-2 text-gray-400 font-bold text-xs flex mr-0 ml-auto">
                         <li className="px-2"><a href="/vacataire/offres">OFFRES</a></li>
                         <li className="px-2"><a href="/vacataire/propositions">PROPOSITION</a></li>
                         <li className="px-2 text-white"><a href="/vacataire/missions">MISSIONS</a></li>
                         <li className="px-2"><a href="/vacataire/paiements">PAIEMENTS</a></li>
                         <li className="px-2"><a href="">NOTES</a></li>
-                    </ul>
-                </div>
-
-                <div className="flex flex-1 justify-between items-center md:hidden">
-                    <ul className="px-2 text-gray-400 font-bold text-xs flex">
-                        <li className="px-2 text-white"><a href=""><FontAwesomeIcon icon={faEnvelope}/></a></li>
-                        <li className="px-2"><a href=""><FontAwesomeIcon icon={faHandshake}/></a></li>
-                        <li className="px-2"><a href=""><FontAwesomeIcon icon={faCalendar}/></a></li>
-                        <li className="px-2"><a href=""><FontAwesomeIcon icon={faMoneyBill}/></a></li>
-                        <li className="px-2"><a href=""><FontAwesomeIcon icon={faStar}/></a></li>
                     </ul>
                 </div>
             </nav>

@@ -11,6 +11,15 @@ export function OfferForm({
     const initialState = {message: null, errors: {}};
     const [state, dispatch] = useFormState<State, FormData>(createMission, initialState)
 
+    const date = new Date(Date.now());
+
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+
 
     return (
         <form id="formData" className="pt-4 text-black" action={dispatch}>
@@ -29,7 +38,7 @@ export function OfferForm({
             </div>
             <div className="pt-2 flex">
                 <p className="pr-5">Prix (HT)</p> <input name="price" type="text"
-                                                         className="bg-gray-100 rounded"/>
+                                                         className="bg-gray-100 rounded focus:border-amber-50"/>
             </div>
             <div>
                 {state.errors?.price &&
@@ -41,10 +50,16 @@ export function OfferForm({
             </div>
             <p className="text-black text-sm">MONTANT TOTAL DE LA MISSION</p>
             <p className="text-black text-sm">(Nb heures x Prix Horaire)</p>
+
+            <p className="text-gray-500 text-lg pt-5">Commentaire</p>
+
+            <textarea  name="comment"
+                   className="bg-gray-100 rounded focus:border-amber-50 h-20 w-full"/>
+
             <p className="text-gray-500 text-lg pt-5">Signature</p>
 
             <div className="pt-2 flex">
-                <p className="pr-5">Nom:</p> <input type="text" className="bg-gray-100 rounded"/>
+                <p className="pr-5">Le {day}/{month}/{year} à {hours}:{minutes}</p>
             </div>
             <div className="pt-5 justify-between">
                 <button type="submit"

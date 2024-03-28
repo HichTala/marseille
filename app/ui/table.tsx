@@ -144,6 +144,8 @@ export async function PropositionsTable({
         .or("name.ilike.%" + piscine + "%" + ",city.ilike.%" + piscine + "%" + ",address.ilike.%" + piscine + "%")
         .match(dateFilter)
 
+    const stats = ["en attente", "accepte", "termine"]
+
     return (
         <div className="mt-6 flow-root">
             <div className="inline-block min-w-full align-middle">
@@ -194,24 +196,27 @@ export async function PropositionsTable({
                                 Adresse
                             </th>
                             <th scope="col" className="px-3 py-5 font-medium">
-                                Category
-                            </th>
-                            <th scope="col" className="px-3 py-5 font-medium">
                                 Date
                             </th>
                             <th scope="col" className="px-3 py-5 font-medium">
-                                Score
+                                Début
+                            </th>
+                            <th scope="col" className="px-3 py-5 font-medium">
+                                Fin
                             </th>
                             <th scope="col" className="px-3 py-5 font-medium">
                                 Nb d'heures
                             </th>
-                            <th scope="col" className="relative py-3 pl-6 pr-3">
-                                <span className="sr-only">Edit</span>
+                            <th scope="col" className="px-3 py-5 font-medium">
+                                Prix
+                            </th>
+                            <th scope="col" className="px-3 py-5 font-medium">
+                                Status
                             </th>
                         </tr>
                         </thead>
                         <tbody className="bg-white">
-                        {missions?.map((mission)=>(
+                        {missions?.map((mission) => (
                             <tr className="whitespace-nowrap py-3 pl-6 pr-3">
                                 <td className="whitespace-nowrap px-3 py-3">
                                     {mission.name}
@@ -220,24 +225,22 @@ export async function PropositionsTable({
                                     {mission.address}, {mission.city}
                                 </td>
                                 <td className="whitespace-nowrap px-3 py-3">
-                                    {mission.certificate}
-                                </td>
-                                <td className="whitespace-nowrap px-3 py-3">
                                     {mission.date}
                                 </td>
                                 <td className="whitespace-nowrap px-3 py-3">
-                                    {mission.score}
+                                    {mission.start}
+                                </td>
+                                <td className="whitespace-nowrap px-3 py-3">
+                                    {mission.end}
                                 </td>
                                 <td className="whitespace-nowrap py-3 pl-6 pr-3">
                                     {mission.duration}
                                 </td>
-                                <td>
-                                    <Link
-                                        href={`/vacataire/propositions/${mission.id}/apply`}
-                                        className="bg-green-300 rounded-md px-1 py-1 text-foreground text-white"
-                                    >
-                                        Postuler
-                                    </Link>
+                                <td className="whitespace-nowrap py-3 pl-6 pr-3">
+                                    {mission.price / 100}
+                                </td>
+                                <td className="whitespace-nowrap py-3 pl-6 pr-3">
+                                    {stats[mission.status]}
                                 </td>
                             </tr>
                         ))}
