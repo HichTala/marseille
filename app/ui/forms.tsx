@@ -1,7 +1,7 @@
 'use client'
 
 import {useFormState} from "react-dom";
-import {createMission, State} from "@/app/lib/actions";
+import {createMission, StateMission} from "@/app/lib/actions";
 
 export function OfferForm({
                               offer
@@ -9,7 +9,7 @@ export function OfferForm({
     offer: any
 }) {
     const initialState = {message: null, errors: {}};
-    const [state, dispatch] = useFormState<State, FormData>(createMission, initialState)
+    const [state, dispatch] = useFormState<StateMission, FormData>(createMission, initialState)
 
     const date = new Date(Date.now());
 
@@ -22,10 +22,9 @@ export function OfferForm({
 
 
     return (
-        <form id="formData" className="pt-4 text-black" action={dispatch}>
-            <input name="offer_id" className="hidden" value={offer.id}/>
+        <form id="formData" className="pt-4" action={dispatch}>
             <div className="flex">
-                <input name="contract" type="checkbox"/>
+                <input name="contract" type="checkbox" className="text-customblue bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"/>
                 <p className="pl-2">J'ai pris connaissance de blabalbal</p>
             </div>
             <div>
@@ -36,10 +35,9 @@ export function OfferForm({
                         </p>
                     ))}
             </div>
-            <div className="pt-2 flex">
-                <p className="pr-5">Prix (HT)</p> <input name="price" type="text"
-                                                         className="bg-gray-100 rounded focus:border-amber-50"/>
-            </div>
+            <p className="text-darkblue dark:text-customwhite font-extrabold text-xl pt-4">Prix (HT)</p>
+            <input name="price" type="number" step="any" placeholder="XX,XX €"
+                                                     className="mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full md:p-2.5 p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
             <div>
                 {state.errors?.price &&
                     state.errors.price.map((error: string) => (
@@ -48,22 +46,22 @@ export function OfferForm({
                         </p>
                     ))}
             </div>
-            <p className="text-black text-sm">MONTANT TOTAL DE LA MISSION</p>
-            <p className="text-black text-sm">(Nb heures x Prix Horaire)</p>
+            <p className="mt-8 text-sm">MONTANT TOTAL DE LA MISSION</p>
+            <p className="text-sm">(Nb heures x Prix Horaire)</p>
 
-            <p className="text-gray-500 text-lg pt-5">Commentaire</p>
+            <p className="text-darkblue dark:text-customwhite font-extrabold text-xl pt-4">Commentaire</p>
 
             <textarea  name="comment"
-                   className="bg-gray-100 rounded focus:border-amber-50 h-20 w-full"/>
+                   className="mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full md:p-2.5 p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
 
-            <p className="text-gray-500 text-lg pt-5">Signature</p>
+            <p className="text-darkblue dark:text-customwhite font-extrabold text-xl pt-4">Signature</p>
 
             <div className="pt-2 flex">
                 <p className="pr-5">Le {day}/{month}/{year} à {hours}:{minutes}</p>
             </div>
-            <div className="pt-5 justify-between">
+            <div className="flex pt-5 justify-center">
                 <button type="submit"
-                        className="bg-gray-700 rounded-md px-4 py-2 text-foreground mb-2 text-white">
+                        className="bg-customblue rounded-xl px-4 py-2 mb-2 text-white">
                     Postuler
                 </button>
             </div>

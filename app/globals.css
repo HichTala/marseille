@@ -4,24 +4,37 @@
 
 @layer base {
     :root {
-        --background: 0 0% 94%;
+        --background: #F9F6F2;
         --btn-background: 200 10% 91%;
         --btn-background-hover: 200 10% 89%;
         --foreground: 200 50% 3%;
         --navbar: #101219;
         --light-blue: #DFF3F9;
         --blue: #72CCFF;
+        --dark-blue: #0B1B29;
+        --custom-white: #F9F6F2;
+        --beige: #E3DAC9;
+        --custom-blue: #3991B0;
+        --custom-turquoise: #49AFB9;
+        --custom-green: #75C4BA;
+        --popupblue: #0F293F;
     }
 
     @media (prefers-color-scheme: dark) {
         :root {
-            --background: 200 50% 3%;
+            --background: #0B1B29;
             --btn-background: 200 10% 9%;
             --btn-background-hover: 200 10% 12%;
             --foreground: 200 20% 96%;
             --navbar: #101219;
             --light-blue: #101219;
             --blue: #72CCFF;
+            --dark-blue: #0B1B29;
+            --custom-white: #F9F6F2;
+            --beige: #E3DAC9;
+            --custom-blue: #3991B0;
+            --custom-turquoise: #49AFB9;
+            --custom-green: #75C4BA
         }
     }
 }
@@ -44,6 +57,14 @@
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@layer base {
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
     }
 }
 

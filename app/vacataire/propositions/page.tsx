@@ -9,6 +9,8 @@ import {createServerComponentClient} from "@supabase/auth-helpers-nextjs";
 import {cookies} from "next/headers";
 import {Suspense} from "react";
 import {Details} from "@/app/ui/details";
+import {Navbar} from "@/app/ui/navbar";
+import {PopupFiltreProposition} from "@/app/ui/popup";
 
 export default async function Page({
                                        searchParams,
@@ -27,37 +29,11 @@ export default async function Page({
     const currentPage = searchParams?.page || 1;
 
     return (
-        <div className="w-full">
-            <nav className={`w-full flex border-b border-b-foreground/10 h-16 relative ${styles.navbar}`}>
-                <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm text-white">
-                    {vacataire?.at(0)['nom']} {vacataire?.at(0)['prenom']}
-                </div>
-
-                <div className="flex flex-1 items-center md:flex">
-                    <ul className="px-2 text-gray-400 font-bold text-xs flex mr-0 ml-auto">
-                        <li className="px-2"><a href="/vacataire/offres">OFFRES</a></li>
-                        <li className="px-2 text-white"><a href="">PROPOSITION</a></li>
-                        <li className="px-2"><a href="/vacataire/missions">MISSIONS</a></li>
-                        <li className="px-2"><a href="/vacataire/paiements">PAIEMENTS</a></li>
-                        <li className="px-2"><a href="">NOTES</a></li>
-                    </ul>
-                </div>
-            </nav>
-            <div className="w-full p-12">
-                <div className="flex w-full items-center justify-between">
-                    <h1 className="text-2xl">Propositions</h1>
-                </div>
-                <div className="mt-4 flex items-center justify-between md:mt-8 space-x-5 sm:grid-cols-1 lg:grid-cols-4">
-                    <Suspense>
-                        <div className="grid-cols-1 space-y-3 w-full">
-                            <Search placeholder="Rechercher piscine..."/>
-                            <DatePicker/>
-                        </div>
-                    </Suspense>
-                    <div className="flex h-10 items-center rounded-lg px-4 text-sm font-medium">
-                        <FontAwesomeIcon icon={faFilter} height={25}/>
-                    </div>
-                </div>
+        <div className="w-full pt-2">
+            <Navbar corresponding_page="propositions"/>
+            <div className="w-full p-8 z-auto grid justify-items-center">
+                <h1 className="text-5xl font-black md:font-extrabold font-sans text-cente">Propositions</h1>
+                <PopupFiltreProposition/>
                 <PropositionsTable piscine={piscine} date={date}/>
             </div>
 

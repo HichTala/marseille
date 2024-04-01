@@ -2,8 +2,6 @@
 
 
 .main-container {
-    background: #0b1b29;
-    color: #e3dac9;
     border-radius: 5px;
     padding: 20px;
 }
@@ -58,11 +56,6 @@
 .month-group:hover .bar,
 .selected .bar {
     background: #3991b0;
-}
-
-.month-group:hover p,
-.selected p {
-    color: #f9f6f2;
 }
 
 .h-25 {
