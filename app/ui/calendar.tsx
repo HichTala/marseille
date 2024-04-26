@@ -26,7 +26,7 @@ function classNames(...classes: any[]) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function Calendar({offers}:{offers:Offer[]}) {
+export default function Calendar({offers}: { offers: Offer[] | null }) {
 
     let today = startOfToday()
     let [selectedDay, setSelectedDay] = useState(today)
@@ -51,7 +51,7 @@ export default function Calendar({offers}:{offers:Offer[]}) {
 
     console.log(offers)
 
-    let selectedDayOffers = offers.filter(
+    let selectedDayOffers = offers?.filter(
         (offer) => (
             isSameDay(parseISO(offer.startDatetime), selectedDay)
         )
@@ -115,7 +115,7 @@ export default function Calendar({offers}:{offers:Offer[]}) {
                                 <time dateTime={format(day, 'dd-mm-yyyy')}>{format(day, 'd')}</time>
                             </button>
                             <div className="flex justify-center">
-                                {offers.some((offer) =>
+                                {offers?.some((offer) =>
                                     isSameDay(parseISO(offer.startDatetime), day)
                                 ) && (
                                     <div className="w-1 h-1 mt-1 rounded-full bg-sky-500"/>
@@ -131,8 +131,8 @@ export default function Calendar({offers}:{offers:Offer[]}) {
                     dateTime={format(selectedDay, 'dd-MM-yyyy')}>{format(selectedDay, 'dd MMMM yyyy')}</time>
                 </h2>
                 <ol className="mt-4 space-y-1 text-sm leading-6 text-gray-500">
-                    {selectedDayOffers.length > 0 ? (
-                        selectedDayOffers.map((offer) => (
+                    {(selectedDayOffers?.length ?? 0) > 0 ? (
+                        selectedDayOffers?.map((offer) => (
                             <Offers offer={offer} key={offer.id}/>
                         ))
                     ) : (
