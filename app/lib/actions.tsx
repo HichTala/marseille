@@ -35,7 +35,6 @@ export async function createMission(
         price: formData.get("price"),
         contract: formData.get("contract"),
     });
-    console.log(formData.get("contract") === 'on')
 
     if (!validatedFields.success) {
         return {
@@ -50,23 +49,12 @@ export async function createMission(
     const offer_id = formData.get("offer_id");
 
     const supabase = createServerComponentClient({cookies})
-    const {data: offers} = await supabase.from("offres").select().eq("id", offer_id)
 
     const {error} = await supabase
         .from('missions')
         .upsert({
-            'piscine_id': offers?.at(0)['piscine_id'],
-            'date': offers?.at(0)['date'],
-            'duration': offers?.at(0)['duration'],
+            'offer_id': offer_id,
             'status': 0,
-            'start': offers?.at(0)['start'],
-            'end': offers?.at(0)['end'],
-            'description': offers?.at(0)['description'],
-            'certificate': offers?.at(0)['certificate'],
-            'name': offers?.at(0)['name'],
-            'address': offers?.at(0)['address'],
-            'city': offers?.at(0)['city'],
-            'supervisor': offers?.at(0)['supervisor'],
             'price': priceInCents
         })
     console.log(error)
@@ -128,7 +116,6 @@ export async function createOffer(
 
     const supabase = createServerComponentClient({cookies})
     const {data: piscine} = await supabase.from("piscine").select()
-    console.log(date)
 
     const {error} = await supabase
         .from('offres')
@@ -139,10 +126,6 @@ export async function createOffer(
             'end': end,
             'description': description,
             'certificate': certificate,
-            'name': piscine?.at(0)['name'],
-            'address': piscine?.at(0)['address'],
-            'city': piscine?.at(0)['city'],
-            'score': piscine?.at(0)['piscine']
         })
     console.log(error)
 //     Status: {'pending': 0, 'rejected': 1, 'accepted': 2, 'done': 3}

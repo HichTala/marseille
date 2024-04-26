@@ -23,6 +23,7 @@ export function OfferForm({
 
     return (
         <form id="formData" className="pt-4" action={dispatch}>
+            <input className="hidden" type="text" value={offer.id} name="offer_id"/>
             <div className="flex">
                 <input name="contract" type="checkbox" className="text-customblue bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"/>
                 <p className="pl-2">J'ai pris connaissance de blabalbal</p>

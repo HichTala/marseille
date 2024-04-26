@@ -40,7 +40,7 @@ export default async function Page(){
                 <div className="flex w-full items-center justify-between mb-5 mt-5">
                     <h1 className="text-2xl">Calendriers</h1>
                 </div>
-                <Calendar/>
+                {/*<Calendar/>*/}
             </div>
 
         </div>

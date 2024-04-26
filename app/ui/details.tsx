@@ -14,6 +14,7 @@ import {
     faStar,
     faUser
 } from "@fortawesome/free-solid-svg-icons";
+import {format} from "date-fns";
 
 export async function Details({
                                   offer_id
@@ -21,7 +22,10 @@ export async function Details({
     offer_id: string
 }) {
     const supabase = createServerComponentClient({cookies})
-    const {data: offers} = await supabase.from("offres").select().eq("id", offer_id)
+    const {data: offers} = await supabase
+        .from("offres")
+        .select(`*, piscine (*)`)
+        .eq("id", offer_id)
 
     if (!offers) {
         notFound()
@@ -48,7 +52,7 @@ export async function DisplayDetails({offer}: { offer: any | null }) {
                 <div className="flex justify-between bg-black bg-opacity-20 py-1 absolute w-full bottom-0 px-4 text-customwhite font-bold">
                     <div className="flex">
                         <FontAwesomeIcon icon={faCalendar}/>
-                        <p className="text-sm px-1">{offer.date}</p>
+                        <p className="text-sm px-1">{format(offer.startDatetime, 'dd/MM/yyyy')}</p>
                     </div>
                     <div className="flex">
                         <FontAwesomeIcon icon={faUser}/>
@@ -56,14 +60,14 @@ export async function DisplayDetails({offer}: { offer: any | null }) {
                     </div>
                 </div>
             </div>
-            <p className="text-2xl text-darkblue dark:text-customwhite md:text-4xl font-extrabold pt-2">{offer.name}</p>
+            <p className="text-2xl text-darkblue dark:text-customwhite md:text-4xl font-extrabold pt-2">{offer.piscine['name']}</p>
             <div className="justify-between">
-                <p className="text-gray-500 dark:text-beige">{offer.address}</p>
+                <p className="text-gray-500 dark:text-beige">{offer.piscine['address']}</p>
                 <div className="flex justify-between">
-                    <p className="text-gray-500 dark:text-beige font-light">{offer.city}</p>
+                    <p className="text-gray-500 dark:text-beige font-light">{offer.piscine['city']}</p>
                     <div className="flex">
                     <FontAwesomeIcon icon={faStar} className="text-amber-400"/>
-                        <p className="px-1 text-sm">{offer.score !== null ? offer.score : 5}</p>
+                        <p className="px-1 text-sm">{offer.piscine['score'] !== null ? offer.piscine['score'] : 5}</p>
                         <p className="px-3 text-sm">(0 avis)</p>
                     </div>
                 </div>
@@ -77,11 +81,11 @@ export async function DisplayDetails({offer}: { offer: any | null }) {
                 </div>
                 <div className="grid justify-items-center">
                     <FontAwesomeIcon className="font-extrabold" icon={faHourglassStart}/>
-                    <p className="text-sm pt-2">{offer.start}</p>
+                    <p className="text-sm pt-2">{format(offer.startDatetime, 'HH:mm')}</p>
                 </div>
                 <div className="grid justify-items-center">
                     <FontAwesomeIcon className="font-extrabold" icon={faHourglassEnd}/>
-                    <p className="text-sm pt-2">{offer.end}</p>
+                    <p className="text-sm pt-2">{format(offer.endDatetime, 'HH:mm')}</p>
                 </div>
             </div>
 

@@ -13,7 +13,35 @@ export async function middleware(req: NextRequest) {
 
   // if user is signed in and the current path is / redirect the user to /account
   if (user && req.nextUrl.pathname === '/login') {
-    return NextResponse.redirect(new URL('/vacataire/offres', req.url))
+    const {data: piscine} = await supabase
+        .from('piscine')
+        .select()
+        .eq('id', user.id)
+    if (piscine?.length){
+      return NextResponse.redirect(new URL('/piscine/jobs', req.url))
+    } else {
+      return NextResponse.redirect(new URL('/vacataire/offres', req.url))
+    }
+  }
+
+  if (user && req.nextUrl.pathname.startsWith('/piscine')) {
+    const {data: vacataire} = await supabase
+        .from('vacataire')
+        .select()
+        .eq('id', user.id)
+    if (vacataire?.length){
+      return NextResponse.redirect(new URL('/vacataire/offres', req.url))
+    }
+  }
+
+  if (user && req.nextUrl.pathname.startsWith('/vacataire')) {
+    const {data: piscine} = await supabase
+        .from('piscine')
+        .select()
+        .eq('id', user.id)
+    if (piscine?.length){
+      return NextResponse.redirect(new URL('/piscine/jobs', req.url))
+    }
   }
 
   // if user is not signed in and the current path is not / redirect the user to /
@@ -25,5 +53,10 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/login', '/dashboard'],
+  matcher: [
+    '/',
+    '/login',
+    '/vacataire/:path*',
+    '/piscine/:path*'
+  ]
 }

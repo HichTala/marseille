@@ -9,7 +9,6 @@ export function PopupFiltreVacation() {
 
     const [popupOpen, setIsOpen] = useState(false);
     const togglePopup = () => {
-        console.log(popupOpen)
         setIsOpen(!popupOpen);
     };
 
@@ -62,7 +61,6 @@ export function PopupFiltreProposition() {
 
     const [popupOpen, setIsOpen] = useState(false);
     const togglePopup = () => {
-        console.log(popupOpen)
         setIsOpen(!popupOpen);
     };
 
