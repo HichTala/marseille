@@ -1,5 +1,3 @@
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCalendarDays, faMoneyBill1Wave, faWaterLadder} from "@fortawesome/free-solid-svg-icons";
 import {createServerComponentClient} from "@supabase/auth-helpers-nextjs";
 import {cookies} from "next/headers";
 import {PropositionDisplay, VacationDisplay} from "@/app/ui/display";

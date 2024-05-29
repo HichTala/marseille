@@ -2,9 +2,6 @@ import MissionsWrapper from "@/app/ui/missions";
 import Calendar from "@/app/ui/calendar";
 import {createServerComponentClient} from "@supabase/auth-helpers-nextjs";
 import {cookies} from "next/headers";
-import styles from "@/app/ui/home.module.css";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCalendar, faEnvelope, faHandshake, faMoneyBill, faStar} from "@fortawesome/free-solid-svg-icons";
 import {Navbar} from "@/app/ui/navbar";
 
 export default async function Page(){

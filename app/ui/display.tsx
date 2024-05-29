@@ -3,14 +3,13 @@
 import Image from "next/image";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
-    faCalendar, faClock, faGraduationCap, faHourglass,
+    faCalendar, faClock, faGraduationCap,
     faHourglassEnd,
     faHourglassStart,
     faMoneyBill1Wave,
-    faStar,
-    faUser
+    faStar
 } from "@fortawesome/free-solid-svg-icons";
-import {differenceInHours, differenceInMinutes, format, getHours, parse, parseISO} from "date-fns";
+import {differenceInHours, format, getHours, parse, parseISO} from "date-fns";
 import {Button} from "@nextui-org/button";
 import {CheckIcon, XMarkIcon} from "@heroicons/react/16/solid";
 import {AcceptVacataire} from "@/app/ui/table";
