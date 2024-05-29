@@ -1,44 +1,45 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCalendarDays, faMoneyBill1Wave, faWaterLadder} from "@fortawesome/free-solid-svg-icons";
+import {createServerComponentClient} from "@supabase/auth-helpers-nextjs";
+import {cookies} from "next/headers";
+import {PropositionDisplay, VacationDisplay} from "@/app/ui/display";
 
 export default async function MissionsWrapper() {
 
-    return (
-        <>
-            {/* NOTE: comment in this code when you get to this point in the course */}
+    const today = new Date('2023-04-25')
 
-            <Card title="VSP - Centre Aquatique" date="26/02/2024" price="110.00 €" />
-            <Card title="VSP - Centre Aquatique" date="26/02/2024" price="110.00 €" />
-            <Card title="VSP - Centre Aquatique" date="26/02/2024" price="110.00 €" />
-            <Card title="VSP - Centre Aquatique" date="26/02/2024" price="110.00 €" />
-        </>
-    );
-}
+    const supabase = createServerComponentClient({cookies})
+    const {data:missions} = await supabase
+        .from("missions")
+        .select(`*, offres(*, piscine(*))`)
+        .gt("offres.startDatetime", today.toISOString())
+        .order("startDatetime", {referencedTable: "offres"})
+        .limit(4)
 
-export function Card({
-                         title,
-                         date,
-                         price,
-                     }: {
-    title: string;
-    date: string;
-    price: string;
-}) {
+    console.log(missions)
 
     return (
-        <div className="rounded-xl bg-gray-50 p-2 shadow-sm">
-            <div className="flex p-4">
-                <FontAwesomeIcon icon={faWaterLadder} className="h-5 w-5 text-gray-700"/>
-                <h3 className="ml-2 text-sm font-medium text-gray-700">{title}</h3>
-            </div>
-            <div className="flex p-4">
-                <FontAwesomeIcon icon={faCalendarDays} className="h-5 w-5 text-gray-700" />
-                <h3 className="ml-2 text-sm font-medium text-gray-700">{date}</h3>
-            </div>
-            <div className="flex p-4">
-                <FontAwesomeIcon icon={faMoneyBill1Wave} className="h-5 w-5 text-gray-700" />
-                <h3 className="ml-2 text-sm font-medium text-gray-700">{price}</h3>
-            </div>
+        <div className="flex overflow-x-auto">
+            {missions?.map((mission) => (
+                <div className="flex-shrink-0 m-2 max-w-80">
+                    <PropositionDisplay mission={mission}/>
+                </div>
+            ))}
+            {missions?.map((mission) => (
+                <div className="flex-shrink-0 m-2 max-w-80">
+                    <PropositionDisplay mission={mission}/>
+                </div>
+            ))}
+            {missions?.map((mission) => (
+                <div className="flex-shrink-0 m-2 max-w-80">
+                    <PropositionDisplay mission={mission}/>
+                </div>
+            ))}
+            {missions?.map((mission) => (
+                <div className="flex-shrink-0 m-2 max-w-80">
+                    <PropositionDisplay mission={mission}/>
+                </div>
+            ))}
         </div>
     );
 }

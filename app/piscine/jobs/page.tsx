@@ -8,14 +8,14 @@ export default async function Page(){
     const supabase = createServerComponentClient({cookies})
     const {data:offers} = await supabase
         .from("offres")
-        .select(`*, vacataire(*)    `)
+        .select(`*, vacataire(*)`)
 
     return (
         <div className="w-full pt-2">
             <NavbarPiscine corresponding_page="planning"/>
 
             <div className="p-12">
-                <Calendar offers={offers}/>
+                <Calendar offers={offers} vacataire={false}/>
             </div>
         </div>
     )
