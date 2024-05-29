@@ -1,6 +1,6 @@
 import {createServerComponentClient} from "@supabase/auth-helpers-nextjs";
 import {cookies} from "next/headers";
-import {PropositionDisplay, VacationDisplay} from "@/app/ui/display";
+import {PropositionDisplay} from "@/app/ui/display";
 
 export default async function MissionsWrapper() {
 
