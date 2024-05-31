@@ -13,7 +13,7 @@ export function Navbar({corresponding_page}: {corresponding_page: String}) {
         "paiements": "dark:text-beige hover:text-darkblue dark:hover:text-customwhite",
         "profile": "dark:text-beige hover:text-darkblue dark:hover:text-customwhite"
     }
-    color_dict[corresponding_page as keyof typeof color_dict] = "text-darkblue md:  dark:text-customwhite"
+    color_dict[corresponding_page as keyof typeof color_dict] = "text-darkblue md:dark:text-customwhite"
 
     const [isOpen, setIsOpen] = useState(false);
 
@@ -43,7 +43,7 @@ export function Navbar({corresponding_page}: {corresponding_page: String}) {
                     <li className={`my-2 md:my-0 px-2 ${color_dict["propositions"]}`}><a href="/vacataire/propositions">PROPOSITIONS</a></li>
                     <li className={`my-2 md:my-0 px-2 ${color_dict["missions"]}`}><a href="/vacataire/missions">MISSIONS</a></li>
                     <li className={`my-2 md:my-0 px-2 ${color_dict["paiements"]}`}><a href="/vacataire/paiements">PAIEMENTS</a></li>
-                    <li className={`my-2 md:my-0 px-2 ${color_dict["paiements"]}`}><a href="">PROFILE</a></li>
+                    <li className={`my-2 md:my-0 px-2 ${color_dict["profile"]}`}><a href="/vacataire/profile">PROFILE</a></li>
                 </ul>
             </div>
         </div>

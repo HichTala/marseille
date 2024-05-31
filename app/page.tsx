@@ -10,17 +10,8 @@ export default async function Index() {
     return (
         <NextUIProvider>
             <div className="flex-1 w-full flex flex-col gap-20 items-center">
-                <nav className={`w-full flex border-b border-b-foreground/10 h-16 relative ${styles.navbar}`}>
-                    <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
-                        <Image src="/logo_seul.png"
-                               height={25}
-                               width={139}
-                               alt="Logo"/>
-                    </div>
-                </nav>
-
                 <div
-                    className="grid sm:grid-cols-1 lg:grid-cols-2 gap-20 px-3 relative justify-center items-center pb-20 scroll-pb-20">
+                    className="grid sm:grid-cols-1 lg:grid-cols-2 gap-20 px-3 relative justify-center items-center pb-20 scroll-pb-20 m-14">
                     <a className={`relative table ${styles.box}`} href="/login">
                         <div className="relative table-cell align-middle">
                             <div className="relative justify-center text-center">

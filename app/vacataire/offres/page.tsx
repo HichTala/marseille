@@ -1,22 +1,9 @@
-import Search, {DatePicker, List} from "@/app/ui/search";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {
-    faBars,
-    faCalendar,
-    faEnvelope,
-    faFilter,
-    faHandshake, faMagnifyingGlass,
-    faMoneyBill,
-    faStar, faXmark
-} from "@fortawesome/free-solid-svg-icons";
 import Table from "@/app/ui/table";
-import Image from "next/image";
-import {createClient} from "@/utils/supabase/server";
 import {createServerComponentClient} from "@supabase/auth-helpers-nextjs";
 import {cookies} from "next/headers";
-import {Details} from "@/app/ui/details";
 import {Navbar} from "@/app/ui/navbar";
 import {PopupFiltreVacation} from "@/app/ui/popup";
+
 
 export default async function Page({
     searchParams,

@@ -2,20 +2,13 @@
 
 import {createServerComponentClient} from "@supabase/auth-helpers-nextjs";
 import {cookies} from "next/headers";
-import Image from "next/image";
-import {
-    faCalendar,
-    faHourglass,
-    faHourglassEnd,
-    faHourglassStart,
-    faMoneyBill,
-    faStar,
-    faUser
-} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {format} from "date-fns";
 import {PiscineDisplay, PropositionDisplay, VacationDisplay} from "@/app/ui/display";
 import {redirect} from "next/navigation";
+import React from "react";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCalendar, faGraduationCap, faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
+import {Chip} from "@nextui-org/react";
+import {ChipContainer} from "@/app/ui/chip";
 
 export default async function Table({
                                         piscine,
@@ -38,10 +31,9 @@ export default async function Table({
         .ilike("certificate", '%' + certificate + '%')
         .match(dateFilter)
 
-    console.log(offers)
-
     return (
         <div className="mt-6 flow-root">
+            <ChipContainer piscine={piscine} certificate={certificate} date={date} />
             <div className="grid min-w-full justify-between grid-cols-1 md:grid-cols-3 gap-8">
                 {offers?.map((offer) => (
                     <PiscineDisplay offer={offer}/>

@@ -23,21 +23,6 @@ export default async function MissionsWrapper() {
                     <PropositionDisplay mission={mission}/>
                 </div>
             ))}
-            {missions?.map((mission) => (
-                <div className="flex-shrink-0 m-2 max-w-80">
-                    <PropositionDisplay mission={mission}/>
-                </div>
-            ))}
-            {missions?.map((mission) => (
-                <div className="flex-shrink-0 m-2 max-w-80">
-                    <PropositionDisplay mission={mission}/>
-                </div>
-            ))}
-            {missions?.map((mission) => (
-                <div className="flex-shrink-0 m-2 max-w-80">
-                    <PropositionDisplay mission={mission}/>
-                </div>
-            ))}
         </div>
     );
 }
