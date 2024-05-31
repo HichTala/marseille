@@ -3,7 +3,7 @@
 import {Input} from "@nextui-org/react";
 import {MailIcon} from "@nextui-org/shared-icons";
 import {Button} from "@nextui-org/button";
-import {signout} from "@/app/vacataire/profile/page";
+import {Signout} from "@/app/vacataire/profile/page";
 
 export function Profile({vacataire, user}:{vacataire : any | null, user: any | null}) {
     return (
@@ -88,5 +88,5 @@ export function Profile({vacataire, user}:{vacataire : any | null, user: any | n
 }
 
 async function handleSignout() {
-    await signout()
+    await Signout()
 }

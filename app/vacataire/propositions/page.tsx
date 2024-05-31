@@ -1,4 +1,4 @@
-import Search, {DatePicker, List} from "@/app/ui/search";
+import Search, {Datepicker, List} from "@/app/ui/search";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCalendar, faEnvelope, faFilter, faHandshake, faMoneyBill, faStar} from "@fortawesome/free-solid-svg-icons";
 import Table, {PropositionsTable} from "@/app/ui/table";
