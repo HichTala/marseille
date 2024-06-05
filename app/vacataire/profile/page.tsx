@@ -30,12 +30,12 @@ export default async function Page(){
 }
 
 
-// export async function Signout() {
-//     const supabase = createClient();
-//     const { error } = await supabase.auth.signOut()
-//     if (error) {
-//         console.error(error)
-//     }
-//     console.log(error)
-//     redirect('/')
-// }
+export async function Signout() {
+    const supabase = createClient();
+    const { error } = await supabase.auth.signOut()
+    if (error) {
+        console.error(error)
+    }
+    console.log(error)
+    redirect('/')
+}
