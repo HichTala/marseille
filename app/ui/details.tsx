@@ -4,17 +4,12 @@ import {createServerComponentClient} from "@supabase/auth-helpers-nextjs";
 import {cookies} from "next/headers";
 import {notFound} from "next/navigation";
 import {OfferForm} from "@/app/ui/forms";
-import Image from "next/image";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
-    faCalendar,
-    faHourglass,
-    faHourglassEnd,
-    faHourglassStart,
-    faStar,
-    faUser
+    faCalendar, faClock, faGraduationCap,
+    faStar
 } from "@fortawesome/free-solid-svg-icons";
-import {format} from "date-fns";
+import {differenceInHours, format, getHours, parse, parseISO} from "date-fns";
 
 export async function Details({
                                   offer_id
@@ -46,46 +41,51 @@ export async function DisplayDetails({offer}: { offer: any | null }) {
             key={offer.id}
             className="w-full z-[-1]"
         >
-            <div className="w-full rounded-3xl overflow-hidden relative h-[100px] md:h-[220px] z-[-1]">
-                <Image src="/piscine_default.jpg" alt="Default swimming pool profile image" width={600} height={200} className="z-[-1]"/>
-
-                <div className="flex justify-between bg-black bg-opacity-20 py-1 absolute w-full bottom-0 px-4 text-customwhite font-bold">
-                    <div className="flex">
-                        <FontAwesomeIcon icon={faCalendar}/>
-                        <p className="text-sm px-1">{format(offer.startDatetime, 'dd/MM/yyyy')}</p>
-                    </div>
-                    <div className="flex">
-                        <FontAwesomeIcon icon={faUser}/>
-                        <p className="text-sm px-1">{offer.certificate}</p>
-                    </div>
-                </div>
-            </div>
             <p className="text-2xl text-darkblue dark:text-customwhite md:text-4xl font-extrabold pt-2">{offer.piscine['name']}</p>
             <div className="justify-between">
                 <p className="text-gray-500 dark:text-beige">{offer.piscine['address']}</p>
                 <div className="flex justify-between">
                     <p className="text-gray-500 dark:text-beige font-light">{offer.piscine['city']}</p>
                     <div className="flex">
-                    <FontAwesomeIcon icon={faStar} className="text-amber-400"/>
+                        <FontAwesomeIcon icon={faStar} className="text-amber-400"/>
                         <p className="px-1 text-sm">{offer.piscine['score'] !== null ? offer.piscine['score'] : 5}</p>
-                        <p className="px-3 text-sm">(0 avis)</p>
+                    </div>
+                </div>
+                <div className="flex justify-between p-2">
+                    <div className="flex">
+                        <FontAwesomeIcon icon={faCalendar}/>
+                        <p className="text-sm px-1">{format(offer.startDatetime, 'dd/MM/yyyy')}</p>
+                    </div>
+                    <div className="flex">
+                        <FontAwesomeIcon icon={faClock}/>
+                        <p className="text-sm px-1">{format(parse(offer.duration, 'HH:mm:ss', new Date()), 'HH:mm')}</p>
+                    </div>
+                    <div className="flex">
+                        <FontAwesomeIcon icon={faGraduationCap}/>
+                        <p className="text-sm px-1">{offer.certificate}</p>
                     </div>
                 </div>
             </div>
 
             <div
-                className="flex justify-between px-5 md:px-12 py-5 mt-12 bg-white border-8 border-customblue shadow-md md:bg-customwhite text-darkblue rounded-full">
-                <div className="grid justify-items-center">
-                    <FontAwesomeIcon className="font-extrabold" icon={faHourglass}/>
-                    <p className="text-sm pt-2">{offer.duration}</p>
-                </div>
-                <div className="grid justify-items-center">
-                    <FontAwesomeIcon className="font-extrabold" icon={faHourglassStart}/>
-                    <p className="text-sm pt-2">{format(offer.startDatetime, 'HH:mm')}</p>
-                </div>
-                <div className="grid justify-items-center">
-                    <FontAwesomeIcon className="font-extrabold" icon={faHourglassEnd}/>
-                    <p className="text-sm pt-2">{format(offer.endDatetime, 'HH:mm')}</p>
+                className="flex justify-between px-5 md:px-12 py-5 mt-3 bg-white border-8 border-customblue shadow-md md:bg-customwhite text-darkblue rounded-full">
+            <div className="flex w-full justify-between px-5 py-2">
+                    <div className="text-center">
+                        <p className="text-gray-400 font-sans text-cente text-sm">Début</p>
+                        <p className="text-sm px-1">{format(offer.startDatetime, 'HH:mm')}</p>
+                    </div>
+                    <div className="border-r-2"/>
+                    <div className="text-center">
+                        <p className="text-gray-400 font-sans text-cente text-sm">Pause</p>
+
+                        <p className="text-sm px-1">( {differenceInHours(parseISO(offer.endDatetime), parseISO(offer.startDatetime)) - getHours(parse(offer.duration, 'HH:mm:ss', new Date()))}h
+                            )</p>
+                    </div>
+                    <div className="border-r-2"/>
+                    <div>
+                        <p className="text-center text-gray-400 font-sans text-cente text-sm">Fin</p>
+                        <p className="text-sm px-1">{format(offer.endDatetime, 'HH:mm')}</p>
+                    </div>
                 </div>
             </div>
 

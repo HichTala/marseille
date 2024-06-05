@@ -11,7 +11,7 @@ const FormSchemaMission = z.object({
     price: z.coerce
         .number()
         .gt(0, {message: "Veuillez entrer un prix supérieur à 0€."}),
-    contract: z.enum(['on'], {
+    contract: z.enum([''], {
         invalid_type_error: "Veuillez acceptez les termes et conditions..."
     }),
     date: z.string(),
@@ -37,6 +37,8 @@ export async function createMission(
     });
 
     if (!validatedFields.success) {
+
+        console.log(validatedFields.error.flatten().fieldErrors)
         return {
             errors: validatedFields.error.flatten().fieldErrors,
             message: "Des champs sont manquant, veuillez à tout remplir correctement"

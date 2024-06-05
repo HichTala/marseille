@@ -11,6 +11,7 @@ export type Offer = {
     endDatetime: string;
     state: string;
     vacataire: Vacataire | null;
+    piscine: Piscine | null;
 }
 
 export type Vacataire = {
@@ -19,4 +20,22 @@ export type Vacataire = {
     prenom: string;
     scores: string;
     certificate: string;
+}
+
+export type Piscine = {
+    id: string;
+    score: string;
+    address: string;
+    city: string;
+    name: string;
+}
+
+export type Mission = {
+    id: string;
+    created_at: string;
+    user_id: string;
+    status: string;
+    price: number;
+    offer_id: string;
+    offer: Offer | null
 }

@@ -1,9 +1,7 @@
 'use client'
 
-import {Fragment, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {ChevronLeftIcon, ChevronRightIcon} from '@heroicons/react/20/solid'
-import {Menu, Transition} from '@headlessui/react'
-import {EllipsisVerticalIcon} from '@heroicons/react/24/outline'
 import {
     add,
     eachDayOfInterval,
@@ -20,8 +18,10 @@ import {
     startOfToday,
     startOfWeek
 } from "date-fns";
-import {Offer} from "@/app/lib/definition";
+import {Mission, Offer} from "@/app/lib/definition";
 import {fr} from "date-fns/locale";
+import {PopupEdit} from "@/app/ui/popupedit";
+import {getMission} from "@/app/ui/get-mission";
 
 function classNames(...classes: any[]) {
     return classes.filter(Boolean).join(' ')
@@ -40,19 +40,15 @@ export default function Calendar({offers, vacataire}: { offers: Offer[] | null, 
     })
 
     function nextMonth() {
-        console.log("next month")
         let firstDayCurrentMonth = parse(currentMonth, 'MMM-yyyy', new Date())
         let firstDayNextMonth = add(firstDayCurrentMonth, {months: 1})
         setCurrentMonth(format(firstDayNextMonth, 'MMM-yyyy'))
     }
 
     function prevMonth() {
-        console.log("prev month")
         let firstDayNextMonth = add(firstDayCurrentMonth, {months: -1})
         setCurrentMonth(format(firstDayNextMonth, 'MMM-yyyy'))
     }
-
-    console.log(offers)
 
     let selectedDayOffers = offers?.filter(
         (offer) => (
@@ -154,75 +150,47 @@ function VacataireOffers({offer}: { offer: any }) {
     let startDateTime = parseISO(offer.startDatetime)
     let endDateTime = parseISO(offer.endDatetime)
 
-    return (
-        <li
-            className="group flex items-center rounded-xl py-2 focus-within:bg-gray-100 hover:bg-gray-100"
-        >
-            <img src="/logos/aquasenart.jpg" alt="" className="h-10 w-10 flex-none rounded-full mr-2"/>
-            <div>
-                <p className="text-gray-900 font-bold text-xs">{offer.piscine['name']}</p>
-                <p className="text-gray-500 text-[9px]">{offer.piscine['address']}, {offer.piscine['city']}</p>
-                <p className="mt-0.5">
-                    <time dateTime={offer.startDatetime}>{format(startDateTime, 'HH:mm')}</time>
-                    -{' '}
-                    <time dateTime={offer.endDatetime}>{format(endDateTime, 'HH:mm')}</time>
-                </p>
-            </div>
-            <Menu as="div"
-                  className="relative opacity-0 focus-within:opacity-100 group-hover:opacity-100">
-                <div>
-                    <Menu.Button
-                        className="-m-2 flex items-center rounded-full p-1.5 text-gray-500 hover:text-gray-600">
-                    <span className="sr-only">Open options</span>
-                        <EllipsisVerticalIcon className="h-6 w-6" aria-hidden="true"/>
-                    </Menu.Button>
-                </div>
+    const [popupOpen, setIsOpen] = useState(false);
+    const [mission, setMission] = useState<Mission | undefined>(undefined);
 
-                <Transition
-                    as={Fragment}
-                    enter="transition ease-out duration-100"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                >
-                    <Menu.Items
-                        className="absolute right-0 z-10 mt-2 w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <div className="py-1">
-                            <Menu.Item>
-                                {({active}) => (
-                                    <a
-                                        href="#"
-                                        className={classNames(
-                                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                            'block px-4 py-2 text-sm'
-                                        )}
-                                    >
-                                        Edit
-                                    </a>
-                                )}
-                            </Menu.Item>
-                            <Menu.Item>
-                                {({active}) => (
-                                    <a
-                                        href="#"
-                                        className={classNames(
-                                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                            'block px-4 py-2 text-sm'
-                                        )}
-                                    >
-                                        Cancel
-                                    </a>
-                                )}
-                            </Menu.Item>
-                        </div>
-                    </Menu.Items>
-                </Transition>
-            </Menu>
-        </li>
-    )
-}
+    const togglePopup = () => {
+        setIsOpen(!popupOpen);
+    };
+
+    useEffect(() => {
+        const fetchMission = async () => {
+            try {
+                const offer_id:string = offer.id
+                const result = await getMission({offer_id});
+                setMission(result);
+            } catch (error) {
+                console.error('Error fetching data: ', error)
+            }
+        };
+        fetchMission();
+    })
+
+
+    return (
+
+        <button className="text-left" onClick={togglePopup}>
+            <PopupEdit mission={mission} popupOpen={popupOpen} setIsOpen={setIsOpen}/>
+            <li
+                className="group flex items-center rounded-xl py-2 focus-within:bg-gray-100 hover:bg-gray-100"
+            >
+                <img src="/logos/aquasenart.jpg" alt="" className="h-10 w-10 flex-none rounded-full mr-2"/>
+                <div>
+                    <p className="text-gray-900 font-bold text-xs">{offer.piscine['name']}</p>
+                    <p className="text-gray-500 text-[9px]">{offer.piscine['address']}, {offer.piscine['city']}</p>
+                    <p className="mt-0.5">
+                        <time dateTime={offer.startDatetime}>{format(startDateTime, 'HH:mm')}</time>
+                        -{' '}
+                        <time dateTime={offer.endDatetime}>{format(endDateTime, 'HH:mm')}</time>
+                    </p>
+                </div>
+            </li>
+        </button>
+        )}
 
 function Offers({offer}: { offer: any }) {
     let startDateTime = parseISO(offer.startDatetime)
@@ -247,58 +215,6 @@ function Offers({offer}: { offer: any }) {
                     <time dateTime={offer.endDatetime}>{format(endDateTime, 'HH:mm')}</time>
                 </p>
             </div>
-            <Menu as="div"
-                  className="relative opacity-0 focus-within:opacity-100 group-hover:opacity-100">
-                <div>
-                    <Menu.Button
-                        className="-m-2 flex items-center rounded-full p-1.5 text-gray-500 hover:text-gray-600">
-                        <span className="sr-only">Open options</span>
-                        <EllipsisVerticalIcon className="h-6 w-6" aria-hidden="true"/>
-                    </Menu.Button>
-                </div>
-
-                <Transition
-                    as={Fragment}
-                    enter="transition ease-out duration-100"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                >
-                    <Menu.Items
-                        className="absolute right-0 z-10 mt-2 w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <div className="py-1">
-                            <Menu.Item>
-                                {({active}) => (
-                                    <a
-                                        href="#"
-                                        className={classNames(
-                                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                            'block px-4 py-2 text-sm'
-                                        )}
-                                    >
-                                        Edit
-                                    </a>
-                                )}
-                            </Menu.Item>
-                            <Menu.Item>
-                                {({active}) => (
-                                    <a
-                                        href="#"
-                                        className={classNames(
-                                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                            'block px-4 py-2 text-sm'
-                                        )}
-                                    >
-                                        Cancel
-                                    </a>
-                                )}
-                            </Menu.Item>
-                        </div>
-                    </Menu.Items>
-                </Transition>
-            </Menu>
         </li>
     )
 }
@@ -312,3 +228,5 @@ let colStartClasses = [
     'col-start-5',
     'col-start-6'
 ]
+
+

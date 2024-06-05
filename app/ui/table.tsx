@@ -5,9 +5,6 @@ import {cookies} from "next/headers";
 import {PiscineDisplay, PropositionDisplay, VacationDisplay} from "@/app/ui/display";
 import {redirect} from "next/navigation";
 import React from "react";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCalendar, faGraduationCap, faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
-import {Chip} from "@nextui-org/react";
 import {ChipContainer} from "@/app/ui/chip";
 
 export default async function Table({
@@ -58,7 +55,7 @@ export async function PropositionsTable({
     const {data: {user}} = await supabase.auth.getUser()
     const {data: missions} = await supabase
         .from("missions")
-        .select(`status, price, offres(*, piscine(*))`)
+        .select(`id, status, price, offres(*, piscine(*))`)
         .eq('user_id', user?.id)
         .or("name.ilike.%" + piscine + "%" + ",city.ilike.%" + piscine + "%" + ",address.ilike.%" + piscine + "%", {referencedTable: 'offres.piscine'})
         .not('offres.piscine', 'is', null)
