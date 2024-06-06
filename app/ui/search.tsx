@@ -140,8 +140,7 @@ export function List({placeholder, list, name}: { placeholder: string, list: str
 
     const certificate = [
         {label: "BNSSA", value: "bnssa", description: "Diplôme BNSSA"},
-        {label: "MNS", value: "mns", description: "Diplôme MNS"},
-        {label: "Autre", value: "autre", description: "Autre"}
+        {label: "MNS", value: "mns", description: "Diplôme MNS"}
     ]
 
     return (
