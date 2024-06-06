@@ -18,6 +18,7 @@ export default async function Page({
     searchParams?: {
         piscine?: string;
         date?: Date;
+        state?: string
         page?: string;
     };
 }) {
@@ -26,6 +27,7 @@ export default async function Page({
 
     const piscine = searchParams?.piscine || '';
     const date = searchParams?.date || null;
+    const state = searchParams?.state || '';
     const currentPage = searchParams?.page || 1;
 
     return (
@@ -33,8 +35,8 @@ export default async function Page({
             <Navbar corresponding_page="propositions"/>
             <div className="w-full p-8 z-auto grid justify-items-center">
                 <h1 className="text-5xl font-black md:font-extrabold font-sans text-cente">Propositions</h1>
-                <PopupFiltreProposition/>
-                <PropositionsTable piscine={piscine} date={date}/>
+                <PopupFiltreProposition currentState={state == '' ? [] : state.split(',')}/>
+                <PropositionsTable piscine={piscine} date={date} state={state}/>
             </div>
 
         </div>

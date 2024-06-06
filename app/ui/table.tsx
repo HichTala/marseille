@@ -18,19 +18,27 @@ export default async function Table({
 }) {
     const supabase = createServerComponentClient({cookies})
 
-    const dateFilter: { date: Date } | {} = date !== null ? {date} : {};
-
-    const {data: offers} = await supabase
+    let query = supabase
         .from("offres")
         .select(`*, piscine (*)`)
         .or("name.ilike.%" + piscine + "%" + ",city.ilike.%" + piscine + "%" + ",address.ilike.%" + piscine + "%", {referencedTable: 'piscine'})
         .not('piscine', 'is', null)
         .ilike("certificate", '%' + certificate + '%')
-        .match(dateFilter)
+
+    if (date){
+        let startDate = new Date(date)
+        let endDate = new Date(date)
+        endDate.setDate(endDate.getDate() + 1)
+
+        query = query.gte('startDatetime', startDate?.toISOString())
+        query = query.lt('startDatetime', endDate?.toISOString())
+    }
+
+    const {data: offers} = await query
 
     return (
         <div className="mt-6 flow-root">
-            <ChipContainer piscine={piscine} certificate={certificate} date={date} />
+            <ChipContainer piscine={piscine} certificate={certificate} date={date} states={[]}/>
             <div className="grid min-w-full justify-between grid-cols-1 md:grid-cols-3 gap-8">
                 {offers?.map((offer) => (
                     <PiscineDisplay offer={offer}/>
@@ -43,29 +51,43 @@ export default async function Table({
 
 export async function PropositionsTable({
                                             piscine,
-                                            date
+                                            date,
+                                            state
                                         }: {
     piscine: string;
     date?: Date | null;
+    state: string
 }) {
     const supabase = createServerComponentClient({cookies})
 
-    const dateFilter: { date: Date } | {} = date !== null ? {date} : {};
+    // .split(",").map(Number)
+
+    const stateFilter = state != "" ? '(' + state + ')' : '(0, 1, 2, 3, 4)'
 
     const {data: {user}} = await supabase.auth.getUser()
-    const {data: missions} = await supabase
+    let query = supabase
         .from("missions")
         .select(`id, status, price, offres(*, piscine(*))`)
         .eq('user_id', user?.id)
         .or("name.ilike.%" + piscine + "%" + ",city.ilike.%" + piscine + "%" + ",address.ilike.%" + piscine + "%", {referencedTable: 'offres.piscine'})
+        .filter("status", "in", stateFilter)
         .not('offres.piscine', 'is', null)
         .not('offres', 'is', null)
-        .match(dateFilter)
 
-    console.log(missions)
+    if (date){
+        let startDate = new Date(date)
+        let endDate = new Date(date)
+        endDate.setDate(endDate.getDate() + 1)
+
+        query = query.gte('offres.startDatetime', startDate?.toISOString())
+        query = query.lt('offres.startDatetime', endDate?.toISOString())
+    }
+
+    const {data: missions} = await query
 
     return (
         <div className="mt-6 flow-root w-full">
+            <ChipContainer piscine={piscine} certificate={""} date={date} states={state != "" ? state.split(",").map(Number) : []}/>
             <div className="grid justify-items-center grid-cols-1 gap-4">
                 {missions?.map((mission) => (
                     <PropositionDisplay mission={mission}/>

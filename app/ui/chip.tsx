@@ -8,47 +8,69 @@ import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import {useDebouncedCallback} from "use-debounce";
 
 export function ChipContainer({
-                         piscine,
-                         certificate,
-                         date
-                     }: {
+                                  piscine,
+                                  certificate,
+                                  date,
+                                  states
+                              }: {
     piscine: string;
     certificate: string;
     date?: Date | null;
+    states: number[];
 }) {
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const {replace} = useRouter();
 
-    const closePiscine = useDebouncedCallback(() => {
+    const states_name = ["En Attente", "Acceptée", "Terminée", "Annulée", "Refusée"]
+
+    const closePiscine = () => {
         const params = new URLSearchParams(searchParams);
         params.set('page', '1');
         params.delete('piscine');
         replace(`${pathname}?${params.toString()}`);
-    }, 300);
+    }
 
-    const closeCertificate = useDebouncedCallback(() => {
+    const closeCertificate = () => {
         const params = new URLSearchParams(searchParams);
         params.set('page', '1');
         params.delete('certificate');
         replace(`${pathname}?${params.toString()}`);
-    }, 300);
+    }
 
-    const closeDate = useDebouncedCallback(() => {
+    const closeDate = () => {
         const params = new URLSearchParams(searchParams);
         params.set('page', '1');
         params.delete('date');
         replace(`${pathname}?${params.toString()}`);
-    }, 300);
+    };
 
+    const closeStates = [0, 1, 2, 3, 4].map(
+        (state) => (
+            () => {
+                const params = new URLSearchParams(searchParams);
+                const newState = params
+                    .get('state')?.split(',')
+                    .map(str => str.replace(state.toString(), ''))
+                    .filter(str => str !== '')
+                    .join(',')
+                console.log(newState)
+                params.set('page', '1');
+                params.set('state', newState ? newState : '');
+                replace(`${pathname}?${params.toString()}`);
+            }
+        )
+    )
+
+    console.log(states)
 
     return (
-        <div className="flex mb-5">
+        <div className="flex-wrap mb-5">
             {
                 piscine != ""
                 &&
                 <Chip
-                    className="px-2 mx-2"
+                    className="px-2 m-1"
                     startContent={<FontAwesomeIcon icon={faMagnifyingGlass}/>}
                     variant="flat"
                     color="primary"
@@ -61,8 +83,8 @@ export function ChipContainer({
                 certificate != ""
                 &&
                 <Chip
-                    className="px-2 mx-2"
-                    startContent={<FontAwesomeIcon icon={faGraduationCap} />}
+                    className="px-2 m-1"
+                    startContent={<FontAwesomeIcon icon={faGraduationCap}/>}
                     variant="flat"
                     color="primary"
                     onClose={closeCertificate}
@@ -74,14 +96,29 @@ export function ChipContainer({
                 date
                 &&
                 <Chip
-                    className="px-2 mx-2"
-                    startContent={<FontAwesomeIcon icon={faCalendar} />}
+                    className="px-2 m-1"
+                    startContent={<FontAwesomeIcon icon={faCalendar}/>}
                     variant="flat"
                     color="primary"
                     onClose={closeDate}
                 >
                     {date?.toString()}
                 </Chip>
+            }
+            {
+                (states?.length ?? 0) > 0 && (
+                    states.map((state) => (
+                            <Chip
+                                className="px-2 m-1"
+                                variant="flat"
+                                color="secondary"
+                                onClose={closeStates[state]}
+                            >
+                                {states_name[state]}
+                            </Chip>
+                        )
+                    )
+                )
             }
         </div>
     )

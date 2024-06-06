@@ -38,9 +38,9 @@ export function Navbar({corresponding_page}: {corresponding_page: String}) {
             </div>
 
             <div className="flex flex-1 items-center">
-                <ul className={`px-2 text-gray-400 font-bold text-xs mr-0 ml-auto md:flex md:items-center absolute md:static bg-white w-full left-0 pl-7 pt-56 md:bg-background md:w-auto md:pl-0 md:pt-0 md:right-0 ${isOpen ? ("opacity-100 translate-y") : ("opacity-0 translate-y-[-40px]")} md:translate-y-0 md:opacity-100 transition-all ease-in duration-500`}>
+                <ul className={`px-2 text-gray-400 font-bold text-xs mr-0 ml-auto md:flex md:items-center absolute md:static bg-white w-full left-0 pl-7 pt-56 md:bg-background md:w-auto md:pl-0 md:pt-0 md:right-0 ${isOpen ? ("opacity-100 translate-y") : ("opacity-0 translate-y-[-40px] pointer-events-none")} md:translate-y-0 md:opacity-100 transition-all ease-in duration-500}`}>
                     <li className={`my-2 md:my-0 px-2 ${color_dict["offres"]}`}><a href="/vacataire/offres">OFFRES</a></li>
-                    <li className={`my-2 md:my-0 px-2 ${color_dict["propositions"]}`}><a href="/vacataire/propositions">PROPOSITIONS</a></li>
+                    <li className={`my-2 md:my-0 px-2 ${color_dict["propositions"]}`}><a href="/vacataire/propositions?page=1&state=0%2C1">PROPOSITIONS</a></li>
                     <li className={`my-2 md:my-0 px-2 ${color_dict["missions"]}`}><a href="/vacataire/missions">MISSIONS</a></li>
                     <li className={`my-2 md:my-0 px-2 ${color_dict["paiements"]}`}><a href="/vacataire/paiements">PAIEMENTS</a></li>
                     <li className={`my-2 md:my-0 px-2 ${color_dict["profile"]}`}><a href="/vacataire/profile">PROFILE</a></li>
