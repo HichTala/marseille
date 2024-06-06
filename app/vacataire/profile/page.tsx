@@ -3,12 +3,7 @@
 import {Navbar} from "@/app/ui/navbar";
 import {createServerComponentClient} from "@supabase/auth-helpers-nextjs";
 import {cookies} from "next/headers";
-import {Input} from "@nextui-org/react";
-import {MailIcon} from "@nextui-org/shared-icons";
-import {Button} from "@nextui-org/button";
-import {redirect} from "next/navigation";
 import {Profile} from "@/app/ui/profile";
-import {createClient} from "@/utils/supabase/server";
 
 export default async function Page(){
 

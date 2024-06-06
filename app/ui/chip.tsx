@@ -5,7 +5,6 @@ import {faCalendar, faGraduationCap, faMagnifyingGlass} from "@fortawesome/free-
 import React from "react";
 import {Chip} from "@nextui-org/react";
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
-import {useDebouncedCallback} from "use-debounce";
 
 export function ChipContainer({
                                   piscine,

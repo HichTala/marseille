@@ -123,20 +123,20 @@ export async function VacationTable() {
 
 export async function AcceptVacataire(offers_id: String, user_id: String) {
     const supabase = createServerComponentClient({cookies})
-    const {error:offer} = await supabase
+    await supabase
         .from("offres")
         .update({'user_id': user_id})
         .eq('id', offers_id)
 
     // stats = ["en attente", "accepte", "liste d'attente", "termine", "annulé", "refusée"]
 
-    const {error: user_mission} = await supabase
+    await supabase
         .from("missions")
         .update({status: 1})
         .eq('user_id', user_id)
         .eq('offer_id', offers_id)
 
-    const {error: mission} = await supabase
+    await supabase
         .from("missions")
         .update({status: 2})
         .neq('user_id', user_id)
