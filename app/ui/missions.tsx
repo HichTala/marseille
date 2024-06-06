@@ -17,8 +17,6 @@ export default async function MissionsWrapper() {
         .order("startDatetime", {referencedTable: "offres"})
         .limit(4)
 
-    console.log(missions)
-
     return (
         <div className="flex overflow-x-auto">
             {missions?.map((mission) => (

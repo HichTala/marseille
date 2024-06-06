@@ -8,6 +8,5 @@ export async function Signout() {
     if (error) {
         console.error(error)
     }
-    console.log(error)
     redirect('/')
 }

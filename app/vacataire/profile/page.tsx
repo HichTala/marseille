@@ -17,7 +17,6 @@ export default async function Page(){
     const {data: vacataire} = await supabase.from("vacataire")
         .select()
         .eq("id", user?.id)
-    console.log(vacataire)
 
     return (
         <div className="w-full">

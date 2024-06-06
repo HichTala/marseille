@@ -37,8 +37,6 @@ export async function createMission(
     });
 
     if (!validatedFields.success) {
-
-        console.log(validatedFields.error.flatten().fieldErrors)
         return {
             errors: validatedFields.error.flatten().fieldErrors,
             message: "Des champs sont manquant, veuillez à tout remplir correctement"
@@ -59,7 +57,6 @@ export async function createMission(
             'status': 0,
             'price': priceInCents
         })
-    console.log(error)
 //     Status: {'pending': 0, 'rejected': 1, 'accepted': 2, 'done': 3}
     if (error) {
         return {
@@ -129,7 +126,6 @@ export async function createOffer(
             'description': description,
             'certificate': certificate,
         })
-    console.log(error)
 //     Status: {'pending': 0, 'rejected': 1, 'accepted': 2, 'done': 3}
     if (error) {
         return {

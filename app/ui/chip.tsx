@@ -54,15 +54,12 @@ export function ChipContainer({
                     .map(str => str.replace(state.toString(), ''))
                     .filter(str => str !== '')
                     .join(',')
-                console.log(newState)
                 params.set('page', '1');
                 params.set('state', newState ? newState : '');
                 replace(`${pathname}?${params.toString()}`);
             }
         )
     )
-
-    console.log(states)
 
     return (
         <div className="flex-wrap mb-5">

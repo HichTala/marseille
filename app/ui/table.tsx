@@ -60,8 +60,6 @@ export async function PropositionsTable({
 }) {
     const supabase = createServerComponentClient({cookies})
 
-    // .split(",").map(Number)
-
     const stateFilter = state != "" ? '(' + state + ')' : '(0, 1, 2, 3, 4)'
 
     const {data: {user}} = await supabase.auth.getUser()
@@ -110,7 +108,6 @@ export async function VacationTable() {
     // .or("name.ilike.%" + piscine + "%" + ",city.ilike.%" + piscine + "%" + ",address.ilike.%" + piscine + "%")
     // .match(dateFilter)
 
-    // console.log(missions)
 
     return (
         <div className="mt-6 flow-root w-full">
@@ -144,10 +141,6 @@ export async function AcceptVacataire(offers_id: String, user_id: String) {
         .update({status: 2})
         .neq('user_id', user_id)
         .eq('offer_id', offers_id)
-
-    console.log(offer)
-    console.log(user_mission)
-    console.log(mission)
 
     redirect('/piscine/validation')
 
