@@ -30,7 +30,7 @@ export default async function MissionsWrapper() {
                 <div className="px-12 w-full">
                     <p className="mb-1 text-gray-500">Vous n'avez pas encore de mission prévu pour l'instant, n'hésitez pas à postuler !</p>
                     <div className="w-full flex justify-end">
-                        <Link isBlock showAnchorIcon href="#" color="primary">Postuler</Link>
+                        <Link isBlock showAnchorIcon href="/vacataire/offres" color="primary">Postuler</Link>
                     </div>
                 </div>
             }

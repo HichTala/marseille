@@ -5,6 +5,7 @@ import {createServerComponentClient} from "@supabase/auth-helpers-nextjs";
 import {cookies} from "next/headers";
 import {revalidatePath} from "next/cache";
 import {redirect} from "next/navigation";
+import {Mission} from "@/app/lib/definition";
 
 const FormSchemaMission = z.object({
     id: z.string(),
@@ -69,12 +70,14 @@ export async function createMission(
 }
 
 const FormSchemaOffer = z.object({
-    certificate: z.string({invalid_type_error: "Veuillez entrer un diplôme"}),
-    date: z.string({invalid_type_error: "Veuillez entrer une date"}),
-    duration: z.string({invalid_type_error: "Veuillez entrer une durée"}),
-    start: z.string({invalid_type_error: "Veuillez entrer une heure de début"}),
-    end: z.string({invalid_type_error: "Veuillez entrer une heure de fin"}),
-    description: z.string()
+    certificate: z.string(),
+    date: z.string(),
+    duration: z.string(),
+    start: z.string(),
+    end: z.string(),
+    description: z.string(),
+    nb_vacataire: z.string(),
+    supervisor: z.string()
 })
 
 const CreateOffer = FormSchemaOffer
@@ -86,7 +89,9 @@ export type StateOffer = {
         duration?: string[];
         start?: string[];
         end?: string[];
-        description?: string[]
+        description?: string[];
+        nb_vacataire?: string[];
+        supervisor?: string[]
     };
     message?: string | null;
 }
@@ -101,7 +106,9 @@ export async function createOffer(
         duration: formData.get("duration"),
         start: formData.get("start"),
         end: formData.get("end"),
-        description: formData.get("description")
+        description: formData.get("description"),
+        nb_vacataire: formData.get("nb_vacataire"),
+        supervisor: formData.get("supervisor")
     });
 
     if (!validatedFields.success) {
@@ -111,29 +118,79 @@ export async function createOffer(
         }
     }
 
-    const {certificate, date, duration, start, end, description} = validatedFields.data
+    const {certificate, date, duration, start, end, description, nb_vacataire, supervisor} = validatedFields.data
 
     const supabase = createServerComponentClient({cookies})
-    const {data: piscine} = await supabase.from("piscine").select()
 
-    const {error} = await supabase
-        .from('offres')
-        .upsert({
-            'date': date,
-            'duration': duration,
-            'start': start,
-            'end': end,
-            'description': description,
-            'certificate': certificate,
-        })
-//     Status: {'pending': 0, 'rejected': 1, 'accepted': 2, 'done': 3}
-    if (error) {
-        return {
-            message: "Erreur de base de donnée: l'offre n'a pas pu être créer"
+    for (let i = 0; i < Number(nb_vacataire); i++) {
+        const {error} = await supabase
+            .from('offres')
+            .upsert({
+                'startDatetime': new Date(date + ' ' + start),
+                'endDatetime': new Date(date + ' ' + end),
+                'duration': duration,
+                'description': description.length != 0 ? description : null,
+                'certificate': certificate,
+                'supervisor': supervisor.length != 0 ? supervisor : null,
+            })
+        console.log(error)
+        if (error) {
+            return {
+                message: "Erreur de base de donnée: l'offre n'a pas pu être créer"
+            }
         }
     }
 
     revalidatePath('/piscine/jobs')
     redirect('/piscine/jobs');
 
+}
+
+export async function acceptVac({mission}: { mission: Mission }) {
+    const supabase = createServerComponentClient({cookies})
+    const {error} = await supabase
+        .from('missions')
+        .update({
+            status: 1
+        })
+        .eq("id", mission.id)
+
+    console.log(error)
+    if (error) {
+        return {
+            message: "Erreur de base de donnée: l'offre n'a pas pu être créer"
+        }
+    }
+
+    const {error:offres} = await supabase
+        .from('offres')
+        .update({
+            user_id: mission.user_id,
+            state: 1
+        })
+        .eq("id", mission.offres?.id)
+
+    console.log(offres)
+    if (offres) {
+        return {
+            message: "Erreur de base de donnée: l'offre n'a pas pu être créer"
+        }
+    }
+}
+
+export async function rejectVac({mission}: { mission: Mission }) {
+    const supabase = createServerComponentClient({cookies})
+    const {error} = await supabase
+        .from('missions')
+        .update({
+            status: 4
+        })
+        .eq("id", mission.id)
+
+    console.log(error)
+    if (error) {
+        return {
+            message: "Erreur de base de donnée: l'offre n'a pas pu être créer"
+        }
+    }
 }

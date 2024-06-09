@@ -9,7 +9,8 @@ export type Offer = {
     duration: string;
     startDatetime: string;
     endDatetime: string;
-    state: string;
+    state: number;
+    available: number;
     vacataire: Vacataire | null;
     piscine: Piscine | null;
 }
@@ -37,5 +38,6 @@ export type Mission = {
     status: string;
     price: number;
     offer_id: string;
-    offer: Offer | null
+    offres: Offer | null;
+    vacataire: Vacataire;
 }

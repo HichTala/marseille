@@ -1,10 +1,26 @@
 'use client'
 
 import {useFormState} from "react-dom";
-import {createMission, StateMission} from "@/app/lib/actions";
-import {Checkbox, Input, Textarea} from "@nextui-org/react";
-import React from "react";
+import {createMission, createOffer, StateMission, StateOffer} from "@/app/lib/actions";
+import {
+    Checkbox,
+    DatePicker,
+    Input,
+    Modal, ModalBody,
+    ModalContent, ModalFooter, ModalHeader,
+    Select,
+    SelectItem,
+    Textarea,
+    TimeInput
+} from "@nextui-org/react";
+import React, {Suspense, useState} from "react";
 import {format} from "date-fns";
+import {Time} from "@internationalized/date";
+import {ClockCircleLinearIcon} from "@nextui-org/shared-icons";
+import {Button} from "@nextui-org/button";
+import Search, {Datepicker, StateCheckbox} from "@/app/ui/search";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
 
 export function OfferForm({
                               offer
@@ -71,5 +87,151 @@ export function OfferForm({
                 </button>
             </div>
         </form>
+    )
+}
+
+export function PostForm() {
+    const initialState = {message: null, errors: {}};
+    const [state, dispatch] = useFormState<StateOffer, FormData>(createOffer, initialState)
+
+    const certificates = [
+        {key: 'BNSSA', label:'BNSSA'},
+        {key: 'MNS', label:'MNS'},
+    ]
+
+    return (
+        <form id="formData" className="pt-4" action={dispatch}>
+            <div className="flex">
+                <DatePicker
+                    name="date"
+                    labelPlacement="outside"
+                    label="Date"
+                    isRequired={true}
+                    className="max-w-[284px] w-3/5 m-1"
+                />
+                <Input
+                    name="nb_vacataire"
+                    labelPlacement="outside"
+                    type="number"
+                    label="Nbr vacataire"
+                    isRequired={true}
+                    defaultValue="1"
+                    className="w-2/5 m-1 text-right"
+                />
+            </div>
+            <div className="flex">
+                <TimeInput
+                    name="start"
+                    labelPlacement="outside"
+                    className="mx-1 mt-6"
+                    label="Heure début"
+                    isRequired={true}
+                    endContent={(
+                        <ClockCircleLinearIcon className="text-xl text-default-400 pointer-events-none flex-shrink-0"/>
+                    )}
+                />
+                <TimeInput
+                    name="end"
+                    labelPlacement="outside"
+                    className="mx-1 mt-6"
+                    label="Heure Fin"
+                    isRequired={true}
+                    endContent={(
+                        <ClockCircleLinearIcon className="text-xl text-default-400 pointer-events-none flex-shrink-0"/>
+                    )}
+                />
+                <TimeInput
+                    name="duration"
+                    labelPlacement="outside"
+                    className="mx-1 mt-6"
+                    label="Durée"
+                    isRequired={true}
+                    endContent={(
+                        <ClockCircleLinearIcon className="text-xl text-default-400 pointer-events-none flex-shrink-0"/>
+                    )}
+                />
+            </div>
+            <div className="flex mt-8">
+                <Input
+                    name="supervisor"
+                    labelPlacement="outside"
+                    className="mx-1"
+                    label="Superviseur"
+                />
+                <Select
+                    isRequired
+                    name="certificate"
+                    labelPlacement="outside"
+                    className="mx-1"
+                    label="Diplôme"
+                >
+                    {certificates.map((certificate) => (
+                        <SelectItem key={certificate.key}>
+                            {certificate.label}
+                        </SelectItem>
+                    ))}
+                </Select>
+
+            </div>
+            <Textarea
+                name="description"
+                labelPlacement="outside"
+                label="Description"
+                className="max-w-xs mt-6"
+            />
+
+            <div className="flex pt-5 justify-end">
+                <Button
+                    type="submit"
+                    color="primary"
+                    className="px-4 py-2 mb-2"
+                >
+                    Poster
+                </Button>
+            </div>
+        </form>
+    )
+}
+
+function PopupRecapOffer() {
+
+    const [popupOpen, setIsOpen] = useState(false);
+    const togglePopup = () => {
+        setIsOpen(!popupOpen);
+    };
+
+    console.log(popupOpen)
+
+    return (
+        <div>
+            <div className="w-full grid justify-items-center">
+                <Modal className="m-auto" backdrop={"blur"} isOpen={popupOpen} onClose={togglePopup}>
+                    <ModalContent>
+                        {(onClose) => (
+                            <>
+                                <ModalHeader className="flex flex-col gap-1">Filtrer les propositions</ModalHeader>
+                                <ModalBody>
+                                </ModalBody>
+                                <ModalFooter>
+                                    <Button color="primary" onPress={onClose}>
+                                        Ok
+                                    </Button>
+                                </ModalFooter>
+                            </>
+                        )}
+                    </ModalContent>
+                </Modal>
+            </div>
+            <div className="flex pt-5 justify-end">
+                <Button
+                    type="submit"
+                    color="primary"
+                    className="px-4 py-2 mb-2"
+                    onClick={togglePopup}
+                >
+                    Poster
+                </Button>
+            </div>
+        </div>
     )
 }
