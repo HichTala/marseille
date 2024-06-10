@@ -15,9 +15,8 @@ export default async function Page(){
     return (
         <div className="w-full pt-2">
             <NavbarPiscine corresponding_page="planning"/>
-
             <Button
-                className="mt-3 ml-8"
+                className="mt-3 ml-8 z-auto"
                 href="/piscine/post"
                 as={Link}
                 color="primary"

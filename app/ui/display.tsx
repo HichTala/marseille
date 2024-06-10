@@ -15,6 +15,9 @@ import {CheckIcon, XMarkIcon} from "@heroicons/react/16/solid";
 import {AcceptVacataire} from "@/app/ui/table";
 import React, {useState} from "react";
 import {PopupEdit} from "@/app/ui/popupedit";
+import {Card, CardFooter, CardHeader} from "@nextui-org/card";
+import {Avatar, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader} from "@nextui-org/react";
+import {acceptVac, validationVac} from "@/app/lib/actions";
 
 export function PiscineDisplay({offer}: { offer: any | null }) {
     return (
@@ -245,65 +248,106 @@ export function PropositionDisplay({mission}: { mission: any | null }) {
     );
 }
 
-export function VacationDisplay({mission}: { mission: any | null }) {
+export function VacationDisplay({offer}: { offer: any | null }) {
+    let startDateTime = parseISO(offer.startDatetime)
+    let endDateTime = parseISO(offer.endDatetime)
 
     // const stats = ["en attente", "accepte", "termine", "annulé", "refusée"]
     const stats = ["customblue", "green-300", "amber-200", "gray-300", "red-400"]
 
-    return (
-        <div
-            key={mission.id}
-            className="mb-2 w-full grid justify-items-center"
-        >
-            <div
-                className="w-full rounded-3xl overflow-hidden relative h-[120px] max-w-[400px] md:h-[120px] bg-white dark:bg-gray-700 flex">
-                <Image src="/piscine_default.jpg" alt="Default swimming pool profile image"
-                       className={`w-[70px] md:w-[80px] border-r-[10px] border-${stats[mission.status]}`} width={80}
-                       height={100}/>
-                <div>
-                    <div className="text-darkblue dark:text-customwhite md:text-xl font-extrabold px-2 pt-2">
-                        {mission.vacataire['nom']} {mission.vacataire['prenom']}
-                    </div>
-                    <div className="flex justify-between pb-2">
-                        <div>
-                            <div className="flex pl-2">
-                                <FontAwesomeIcon icon={faCalendar}/>
-                                <p className="text-xs px-1">{format(mission.offres['startDatetime'], 'dd/MM/yy')}</p>
-                            </div>
-                            <div className="flex pl-2">
-                                <FontAwesomeIcon icon={faMoneyBill1Wave}/>
-                                <p className="text-xs px-1">{mission.price / 100} €</p>
-                            </div>
-                        </div>
-                        <div>
-                            <div className="flex pt-0.5 pr-1.5">
-                                <FontAwesomeIcon icon={faHourglassStart}/>
-                                <p className="text-xs px-1">{format(mission.offres['startDatetime'], 'HH:mm')}</p>
-                            </div>
-                            <div className="flex pt-0.5 pr-1.5">
-                                <FontAwesomeIcon icon={faHourglassEnd}/>
-                                <p className="text-xs px-1">{format(mission.offres['endDatetime'], 'HH:mm')}</p>
-                            </div>
-                        </div>
-                    </div>
+    const [popupOpen, setIsOpen] = useState(false);
+    const togglePopup = () => {
+        setIsOpen(!popupOpen);
+    };
 
-                    <div className="flex gap-4 items-center justify-center">
-                        <Button
-                            isIconOnly
-                            color="success"
-                            aria-label="Accepter"
-                            size="sm"
-                            onClick={() => AcceptVacataire(mission.offres['id'], mission.vacataire['id'])}
-                        >
-                            <CheckIcon/>
-                        </Button>
-                        <Button isIconOnly color="danger" variant="bordered" aria-label="Refuser" size="sm">
-                            <XMarkIcon/>
-                        </Button>
-                    </div>
-                </div>
-            </div>
-        </div>
+    const handleValidation = async () => {
+        console.log('coucou')
+        await validationVac({offer})
+        location.reload()
+    }
+
+    return (
+        <>
+            <Modal className="m-auto" backdrop={"blur"} isOpen={popupOpen} onClose={togglePopup}>
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader className="flex flex-col gap-1">Noter la vacation</ModalHeader>
+                            <ModalBody>
+                                <div className="flex gap-5">
+                                    <Input
+                                        type="number"
+                                        label="Étoiles"
+                                        labelPlacement="outside"
+                                        endContent={
+                                            <div className="pointer-events-none flex items-center">
+                                                <FontAwesomeIcon icon={faStar}
+                                                                 className="text-amber-400"/>
+                                            </div>
+                                        }
+                                    />
+                                    <div className="flex-col gap-1">
+                                        <Button color="success" onClick={handleValidation}>
+                                            Valider la vacation
+                                        </Button>
+                                        <Button color="danger" className="mt-2">
+                                            Annuler la vacation
+                                        </Button>
+                                    </div>
+                                </div>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button color="primary" onPress={onClose}>
+                                    Ok
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+            <button className="w-full" onClick={togglePopup}>
+                <Card>
+                    <CardHeader className="justify-between">
+                        <div className="flex justify-between w-full">
+                            <div className="flex gap-5">
+                                <Avatar isBordered color="danger" radius="full"
+                                        size="md"
+                                        src="https://nextui.org/avatars/avatar-1.png"/>
+                                <div className="flex flex-col gap-1 items-start justify-center">
+                                    <h4 className="text-small font-semibold leading-none text-default-600">{offer.vacataire['nom']} {offer.vacataire['prenom']}</h4>
+                                    <h5 className="text-small tracking-tight text-default-400">
+                                        <time dateTime={offer.startDatetime}>{format(startDateTime, 'HH:mm')}</time>
+                                        -{' '}
+                                        <time dateTime={offer.endDatetime}>{format(endDateTime, 'HH:mm')}</time>
+                                    </h5>
+                                </div>
+                            </div>
+                            <div>
+                                {
+                                    [1, 2].includes(offer.state)
+                                    &&
+                                    <>
+                                        <Button isDisabled color="danger"
+                                                variant="flat">
+                                            À venir
+                                        </Button>
+                                    </>
+                                }
+                            </div>
+                        </div>
+                    </CardHeader>
+                    <CardFooter>
+                        <div className="flex gap-3 justify-end w-full">
+                            <div className="flex gap-1">
+                                <p className="font-semibold text-default-400 text-small">
+                                    <time dateTime={offer.startDatetime}>{format(startDateTime, 'dd/MM/yyyy')}</time>
+                                </p>
+                            </div>
+                        </div>
+                    </CardFooter>
+                </Card>
+            </button>
+        </>
     );
 }
 

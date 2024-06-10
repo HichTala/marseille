@@ -101,19 +101,19 @@ export async function VacationTable() {
 
     // const dateFilter: { date: Date } | {} = date !== null ? {date} : {};
 
-    const {data: missions} = await supabase
-        .from("missions")
-        .select(`status, price, offres(*), vacataire(*)`)
-        .eq('status', 0)
+    const {data: offers} = await supabase
+        .from("offres")
+        .select(`*, vacataire(*)`)
+        .eq('state', 1)
+        // .not('offres.vacataire', 'is', null)
     // .or("name.ilike.%" + piscine + "%" + ",city.ilike.%" + piscine + "%" + ",address.ilike.%" + piscine + "%")
     // .match(dateFilter)
-
 
     return (
         <div className="mt-6 flow-root w-full">
             <div className="grid justify-items-center grid-cols-1 gap-4">
-                {missions?.map((mission) => (
-                    <VacationDisplay mission={mission}/>
+                {offers?.map((offer) => (
+                    <VacationDisplay offer={offer}/>
                 ))}
             </div>
         </div>

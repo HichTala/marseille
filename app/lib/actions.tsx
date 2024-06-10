@@ -5,7 +5,7 @@ import {createServerComponentClient} from "@supabase/auth-helpers-nextjs";
 import {cookies} from "next/headers";
 import {revalidatePath} from "next/cache";
 import {redirect} from "next/navigation";
-import {Mission} from "@/app/lib/definition";
+import {Mission, Offer} from "@/app/lib/definition";
 
 const FormSchemaMission = z.object({
     id: z.string(),
@@ -189,6 +189,45 @@ export async function rejectVac({mission}: { mission: Mission }) {
 
     console.log(error)
     if (error) {
+        return {
+            message: "Erreur de base de donnée: l'offre n'a pas pu être créer"
+        }
+    }
+}
+
+export async function validationVac({offer}: {offer: Offer}){
+    const supabase = createServerComponentClient({cookies})
+    const {error} = await supabase
+        .from('offres')
+        .update({
+            state: 2
+        })
+        .eq("id", offer.id)
+
+
+    const {error:missions1} = await supabase
+        .from('missions')
+        .update({
+            status: 4
+        })
+        .eq("offer_id", offer.id)
+        .neq("user_id", offer.user_id)
+    console.log(missions1)
+    if (missions1) {
+        return {
+            message: "Erreur de base de donnée: l'offre n'a pas pu être créer"
+        }
+    }
+
+    const {error:missions2} = await supabase
+        .from('missions')
+        .update({
+            status: 2
+        })
+        .eq("offer_id", offer.id)
+        .eq("user_id", offer.user_id)
+    console.log(missions2)
+    if (missions2) {
         return {
             message: "Erreur de base de donnée: l'offre n'a pas pu être créer"
         }
