@@ -36,11 +36,17 @@ export default async function Table({
 
     const {data: offers} = await query
 
+    const {data:missions} = await supabase
+        .from('missions')
+        .select('offer_id')
+
     return (
         <div className="mt-6 flow-root">
             <ChipContainer piscine={piscine} certificate={certificate} date={date} states={[]}/>
             <div className="grid min-w-full justify-between grid-cols-1 md:grid-cols-3 gap-8">
-                {offers?.map((offer) => (
+                {offers?.filter((offer) => {
+                    return !(missions?.some(mission => mission.offer_id === offer.id))
+                }).map((offer) => (
                     <PiscineDisplay offer={offer}/>
                 ))}
             </div>

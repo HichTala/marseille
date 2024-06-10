@@ -249,6 +249,8 @@ export function PropositionDisplay({mission}: { mission: any | null }) {
 }
 
 export function VacationDisplay({offer}: { offer: any | null }) {
+    const [value, setValue] = useState("5");
+
     let startDateTime = parseISO(offer.startDatetime)
     let endDateTime = parseISO(offer.endDatetime)
 
@@ -261,8 +263,7 @@ export function VacationDisplay({offer}: { offer: any | null }) {
     };
 
     const handleValidation = async () => {
-        console.log('coucou')
-        await validationVac({offer})
+        await validationVac({stars: Number(value), offer})
         location.reload()
     }
 
@@ -279,6 +280,9 @@ export function VacationDisplay({offer}: { offer: any | null }) {
                                         type="number"
                                         label="Étoiles"
                                         labelPlacement="outside"
+                                        value={value}
+                                        // @ts-ignore
+                                        onChange={setValue}
                                         endContent={
                                             <div className="pointer-events-none flex items-center">
                                                 <FontAwesomeIcon icon={faStar}

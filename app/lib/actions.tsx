@@ -162,7 +162,7 @@ export async function acceptVac({mission}: { mission: Mission }) {
         }
     }
 
-    const {error:offres} = await supabase
+    const {error: offres} = await supabase
         .from('offres')
         .update({
             user_id: mission.user_id,
@@ -195,7 +195,7 @@ export async function rejectVac({mission}: { mission: Mission }) {
     }
 }
 
-export async function validationVac({offer}: {offer: Offer}){
+export async function validationVac({offer, stars}: { offer: Offer, stars: number }) {
     const supabase = createServerComponentClient({cookies})
     const {error} = await supabase
         .from('offres')
@@ -203,9 +203,14 @@ export async function validationVac({offer}: {offer: Offer}){
             state: 2
         })
         .eq("id", offer.id)
+    console.log(error)
+    if (error) {
+        return {
+            message: "Erreur de base de donnée: l'offre n'a pas pu être créer"
+        }
+    }
 
-
-    const {error:missions1} = await supabase
+    const {error: missions1} = await supabase
         .from('missions')
         .update({
             status: 4
@@ -219,7 +224,7 @@ export async function validationVac({offer}: {offer: Offer}){
         }
     }
 
-    const {error:missions2} = await supabase
+    const {error: missions2} = await supabase
         .from('missions')
         .update({
             status: 2
@@ -232,4 +237,25 @@ export async function validationVac({offer}: {offer: Offer}){
             message: "Erreur de base de donnée: l'offre n'a pas pu être créer"
         }
     }
+
+    const {data: vacataires} = await supabase
+        .from('vacataire')
+        .select('nb_mission, scores')
+        .eq("id", offer.user_id)
+
+    const {error: error_vacataire} = await supabase
+        .from('vacataire')
+        .update({
+            nb_mission: vacataires?.at(0)?.nb_mission+1,
+            scores: vacataires?.at(0)?.scores ? (vacataires?.at(0)?.scores + stars/vacataires?.at(0)?.nb_mission)*(vacataires?.at(0)?.nb_mission+1) : stars
+        })
+        .eq("id", offer.user_id)
+
+    console.log(error_vacataire)
+    if (error_vacataire) {
+        return {
+            message: "Erreur de base de donnée: l'offre n'a pas pu être créer"
+        }
+    }
+
 }
