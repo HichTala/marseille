@@ -1,9 +1,11 @@
 'use client'
 
-import {Listbox, ListboxItem} from "@nextui-org/react";
+import {Accordion, AccordionItem, Listbox, ListboxItem} from "@nextui-org/react";
 import {ChevronRightIcon} from "@heroicons/react/20/solid";
 import {usePress} from "@react-aria/interactions";
-import React from "react";
+import React, {useEffect, useState} from "react";
+import {getMissions, getMissionsPaiements} from "@/app/ui/get-mission";
+import {Mission} from "@/app/lib/definition";
 
 export function AnnualTotal() {
     return (
@@ -46,15 +48,15 @@ export function SalesPerMounth() {
                     </div>
                     <div className="mr-5">
                         <div className="flex w-full justify-center">
-                            <div className="bg-customblue w-6 h-14 rounded-lg hover:bg-customblue"/>
+                            <div className="bg-gray-300 w-6 h-14 rounded-lg hover:bg-customblue"/>
                         </div>
-                        <p className="month text-customblue font-bold">Mai</p>
+                        <p className="month">Mai</p>
                     </div>
                     <div className="mr-5">
                         <div className="flex w-full justify-center">
-                            <div className="bg-gray-300 w-6 h-1 rounded-lg hover:bg-customblue"/>
+                            <div className="bg-customblue w-6 h-1 rounded-lg hover:bg-customblue"/>
                         </div>
-                        <p className="month">Jui</p>
+                        <p className="month text-customblue font-bold">Jui</p>
                     </div>
                     <div className="mr-5">
                         <div className="flex w-full justify-center">
@@ -102,74 +104,67 @@ export function SalesPerMounth() {
     );
 }
 
-export function DetailsFacturation() {
+interface PiscineRecap {
+    [key: string]: number
+}
 
-    // let [events, setEvents] = React.useState([]);
-    // let {pressProps, isPressed} = usePress({
-    //     onPressStart: (e) =>
-    //         setEvents(
-    //             (events) => [...events, `press start with ${e.pointerType}`]
-    //         ),
-    //     onPressEnd: (e) =>
-    //         setEvents(
-    //             (events) => [...events, `press end with ${e.pointerType}`]
-    //         ),
-    //     onPress: (e) =>
-    //         setEvents(
-    //             (events) => [...events, `press with ${e.pointerType}`]
-    //         )
-    // });
+function PaiementsDetails({prices}: { prices: PiscineRecap }) {
+    const recapMap = new Map<string, number>(Object.entries(prices))
 
     return (
-
-        <div className="w-full mt-10">
-            <h1 className="text-xl font-black textfont-sans text-cente mb-1">Détail</h1>
-            <Listbox
-                aria-label="User Menu"
-                onAction={(key) => alert(key)}
-                className="p-0 gap-0 divide-y divide-default-300/50 dark:divide-default-100/80 bg-content1 max-w-[300px] overflow-visible shadow-small rounded-medium"
-                itemClasses={{
-                    base: "px-3 first:rounded-t-medium last:rounded-b-medium rounded-none gap-3 h-12 data-[hover=true]:bg-default-100/80",
-                }}
-            >
-                <ListboxItem
-                    key="prestalis"
-                    endContent={<Sales number={240}/>}
-                >
-                    Prestalis
-                </ListboxItem>
-                <ListboxItem
-                    key="vert-marine"
-                    endContent={<Sales number={500}/>}
-                >
-                    Vert Marine
-                </ListboxItem>
-                <ListboxItem
-                    key="etc"
-                    endContent={<Sales number={240}/>}
-                >
-                    etc
-                </ListboxItem>
-
-            </Listbox>
+        <div>
+            {
+                Array.from(recapMap).map(([name, price], index) => {
+                    return (
+                        <div className="flex justify-between px-3">
+                            <p className="text-xs text-default-400">{name}</p>
+                            <div className="flex gap-1">
+                                <p className="font-semibold text-default-400 text-small">{price / 100}</p>
+                                <p className="text-default-400 text-small">€</p>
+                            </div>
+                        </div>
+                    )
+                })
+            }
         </div>
+    );
+}
 
+export function DetailsFacturation() {
 
-        // <div className="w-full max-w-[600px] border-2 border-gray-300 rounded-full overflow-hidden">
-        //     <div
-        //         className="flex justify-between w-full p-5 border-gray-300 hover:dark:bg-gray-700 cursor-pointer px-16 hover:bg-gray-300">
-        //         <p>Prestalis</p>
-        //         <p>240 €</p>
-        //     </div>
-        //     <div className="flex justify-between w-full p-5 border-t-2 border-gray-300 hover:dark:bg-gray-700 cursor-pointer px-16 hover:bg-gray-300">
-        //         <p>Vert Marine</p>
-        //         <p>500 €</p>
-        //     </div>
-        //     <div className="flex justify-between w-full p-5 border-t-2 border-gray-300 hover:dark:bg-gray-700 cursor-pointer px-16 hover:bg-gray-300">
-        //         <p>ETC</p>
-        //         <p>240 €</p>
-        //     </div>
-        // </div>
+    const [recap, setRecap] = useState({});
+
+    useEffect(() => {
+        const fetchMission = async () => {
+            try {
+                const result = await getMissionsPaiements();
+                setRecap(result)
+            } catch (error) {
+                console.error('Error fetching data: ', error)
+            }
+        };
+        fetchMission();
+    })
+
+    const recapMap = new Map<string, PiscineRecap>(Object.entries(recap))
+
+    return (
+        <>
+            <div className="w-full mt-10">
+                <h1 className="text-xl font-black textfont-sans text-cente mb-1">Détail</h1>
+                <Accordion variant="splitted">
+                    {
+                        Array.from(recapMap).map(([group, prices], index) => {
+                            return(
+                                <AccordionItem key="1" aria-label="Accordion 1" title={group}>
+                                    <PaiementsDetails prices={prices}/>
+                                </AccordionItem>
+                                )
+                        })
+                    }
+                </Accordion>
+            </div>
+        </>
     );
 }
 

@@ -29,6 +29,7 @@ export type Piscine = {
     address: string;
     city: string;
     name: string;
+    group: string;
 }
 
 export type Mission = {
