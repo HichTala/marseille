@@ -48,35 +48,38 @@ export async function getMissionsPaiements() {
         .eq('user_id', user?.id)
         .eq('status', 2)
 
-    let paiements_recap: PaiementRecap = {}
+    let paiements_recap: PaiementRecap[] = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
 
     missions?.map((mission: Mission) => {
         if (mission.offres?.piscine){
+            let mounth = Number(missions?.at(0).offres.startDatetime.split('-')[1])-1
             if (mission.offres?.piscine?.group) {
-                if (paiements_recap[mission.offres?.piscine?.group] !== undefined) {
-                    if (paiements_recap[mission.offres?.piscine?.group][mission.offres?.piscine?.name] !== undefined) {
-                        paiements_recap[mission.offres?.piscine?.group][mission.offres?.piscine?.name] = paiements_recap[mission.offres?.piscine?.group][mission.offres?.piscine?.name] + mission.price
+                if (paiements_recap[mounth][mission.offres?.piscine?.group] !== undefined) {
+                    if (paiements_recap[mounth][mission.offres?.piscine?.group][mission.offres?.piscine?.name] !== undefined) {
+                        paiements_recap[mounth][mission.offres?.piscine?.group][mission.offres?.piscine?.name] = paiements_recap[mounth][mission.offres?.piscine?.group][mission.offres?.piscine?.name] + mission.price
                     } else {
                         let piscine_recap: PiscineRecap = {}
                         piscine_recap[mission.offres?.piscine?.name] = mission.price
-                        paiements_recap[mission.offres?.piscine?.group] = piscine_recap
+                        paiements_recap[mounth][mission.offres?.piscine?.group] = piscine_recap
                     }
                 } else {
                     let piscine_recap: PiscineRecap = {}
                     piscine_recap[mission.offres?.piscine?.name] = mission.price
-                    paiements_recap[mission.offres?.piscine?.group] = piscine_recap
+                    paiements_recap[mounth][mission.offres?.piscine?.group] = piscine_recap
                 }
             } else {
-                if (paiements_recap[mission.offres?.piscine?.name] !== undefined) {
-                    paiements_recap[mission.offres?.piscine?.name][mission.offres?.piscine?.name] = paiements_recap[mission.offres?.piscine?.name][mission.offres?.piscine?.name] + mission.price
+                if (paiements_recap[mounth][mission.offres?.piscine?.name] !== undefined) {
+                    paiements_recap[mounth][mission.offres?.piscine?.name][mission.offres?.piscine?.name] = paiements_recap[mounth][mission.offres?.piscine?.name][mission.offres?.piscine?.name] + mission.price
                 } else {
                     let piscine_recap: PiscineRecap = {}
                     piscine_recap[mission.offres?.piscine?.name] = mission.price
-                    paiements_recap[mission.offres?.piscine?.name] = piscine_recap
+                    paiements_recap[mounth][mission.offres?.piscine?.name] = piscine_recap
                 }
             }
         }
     })
+
+    // console.log(paiements_recap)
 
     return paiements_recap
 }
