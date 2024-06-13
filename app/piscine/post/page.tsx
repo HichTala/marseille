@@ -1,4 +1,4 @@
-import {Navbar} from "@/app/ui/navbar";
+import {Navbar, NavbarPiscine} from "@/app/ui/navbar";
 import {Link} from "@nextui-org/react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronLeft} from "@fortawesome/free-solid-svg-icons";
@@ -9,7 +9,7 @@ import {Post} from "@/app/ui/post";
 export default function Page() {
     return (
         <div className="w-full pt-2 items-center">
-            <Navbar corresponding_page="offres"/>
+            <NavbarPiscine corresponding_page="offres"/>
             <Button
                 className="m-4 cursor-pointer"
                 href="/piscine/jobs"
