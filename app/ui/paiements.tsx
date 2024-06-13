@@ -190,6 +190,10 @@ export function DetailsFacturation() {
         // console.log(mounth, `${index == selectedMounth ? "bg-customblue" : "bg-gray-300"} w-6 h-[${Math.trunc(mounth_sum(recaps[index]) * 99 / max) + 1}%] rounded-lg hover:bg-customblue`)
     })
 
+    mounths.map((mounth, index) => {
+        console.log(mounth, `${index == selectedMounth ? "bg-customblue" : "bg-gray-300"} w-6 h-[${Math.trunc(mounth_sum(recaps[index]) * 99 / max) + 1}%] rounded-lg hover:bg-customblue`)
+    })
+
     return (
         <>
             <AnnualTotal total={total/100}/>
