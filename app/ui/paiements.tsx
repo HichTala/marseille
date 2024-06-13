@@ -19,26 +19,85 @@ export function AnnualTotal({total}: { total: number }) {
     );
 }
 
-export function SalesPerMounth({index, selectedMounth, mounth, recaps, max}: {
-    index: number,
-    selectedMounth: number,
-    mounth: string,
-    recaps: PaiementRecap[],
-    max: number
-}) {
-
-    const percentage = Math.trunc(mounth_sum(recaps[index]) * 99 / max) + 1
-
-    const bgColorClass = index == selectedMounth ? "bg-customblue" : "bg-gray-300"
-    const heightClass = `h-[${percentage}%]`
-
+export function SalesPerMounth() {
     return (
-        <div className="mr-5">
-            <div className="flex w-full h-[128px] justify-center items-end">
-                <div
-                    className={`${bgColorClass} w-6 ${heightClass} rounded-lg hover:bg-customblue`}/>
+        <div className="flex m-2 justify-center items-center">
+            <div className="main-container items-center text-darkblue dark:text-beige max-w-[300px] md:max-w-none">
+                <div className="flex overflow-x-auto m-auto items-end">
+                    <div className="mr-5">
+                        <div className="flex w-full justify-center">
+                            <div className="bg-gray-300 w-6 h-16 rounded-lg hover:bg-customblue"/>
+                        </div>
+                        <p className="month">Jan</p>
+                    </div>
+                    <div className="mr-5">
+                        <div className="flex w-full justify-center">
+                            <div className="bg-gray-300 w-6 h-36 rounded-lg hover:bg-customblue"/>
+                        </div>
+                        <p className="month">Fev</p>
+                    </div>
+                    <div className="mr-5">
+                        <div className="flex w-full justify-center">
+                            <div className="bg-gray-300 w-6 h-32 rounded-lg hover:bg-customblue"/>
+                        </div>
+                        <p className="month">Mar</p>
+                    </div>
+                    <div className="mr-5">
+                        <div className="flex w-full justify-center">
+                            <div className="bg-gray-300 w-6 h-28 rounded-lg hover:bg-customblue"/>
+                        </div>
+                        <p className="month">Avr</p>
+                    </div>
+                    <div className="mr-5">
+                        <div className="flex w-full justify-center">
+                            <div className="bg-gray-300 w-6 h-14 rounded-lg hover:bg-customblue"/>
+                        </div>
+                        <p className="month">Mai</p>
+                    </div>
+                    <div className="mr-5">
+                        <div className="flex w-full justify-center">
+                            <div className="bg-customblue w-6 h-1 rounded-lg hover:bg-customblue"/>
+                        </div>
+                        <p className="month">Jui</p>
+                    </div>
+                    <div className="mr-5">
+                        <div className="flex w-full justify-center">
+                            <div className="bg-gray-300 w-6 h-32 rounded-lg hover:bg-customblue"/>
+                        </div>
+                        <p className="month">Jui</p>
+                    </div>
+                    <div className="mr-5">
+                        <div className="flex w-full justify-center">
+                            <div className="bg-gray-300 w-6 h-16 rounded-lg hover:bg-customblue"/>
+                        </div>
+                        <p className="month">Aou</p>
+                    </div>
+                    <div className="mr-5">
+                        <div className="flex w-full justify-center">
+                            <div className="bg-gray-300 w-6 h-3 rounded-lg hover:bg-customblue"/>
+                        </div>
+                        <p className="month">Sep</p>
+                    </div>
+                    <div className="mr-5">
+                        <div className="flex w-full justify-center">
+                            <div className="bg-gray-300 w-6 h-8 rounded-lg hover:bg-customblue"/>
+                        </div>
+                        <p className="month">Oct</p>
+                    </div>
+                    <div className="mr-5">
+                        <div className="flex w-full justify-center">
+                            <div className="bg-gray-300 w-6 h-12 rounded-lg hover:bg-customblue"/>
+                        </div>
+                        <p className="month">Nov</p>
+                    </div>
+                    <div className="mr-5">
+                        <div className="flex w-full justify-center">
+                            <div className="bg-gray-300 w-6 h-24 rounded-lg hover:bg-customblue"/>
+                        </div>
+                        <p className="month">Dec</p>
+                    </div>
+                </div>
             </div>
-            <p className={index == selectedMounth ? "text-customblue font-bold" : ""}>{mounth}</p>
         </div>
     );
 }
@@ -133,16 +192,23 @@ export function DetailsFacturation() {
 
     return (
         <>
-            <AnnualTotal total={total / 100}/>
+            <AnnualTotal total={total/100}/>
+
+            <div className="hidden bg-gray-300 bg-customblue h-[0%] h-[1%] h-[2%] h-[3%] h-[4%] h-[5%] h-[6%] h-[7%] h-[8%] h-[9%] h-[10%] h-[11%] h-[12%] h-[13%] h-[14%] h-[15%] h-[16%] h-[17%] h-[18%] h-[19%] h-[20%] h-[21%] h-[22%] h-[23%] h-[24%] h-[25%] h-[26%] h-[27%] h-[28%] h-[29%] h-[30%] h-[31%] h-[32%] h-[33%] h-[34%] h-[35%] h-[36%] h-[37%] h-[38%] h-[39%] h-[40%] h-[41%] h-[42%] h-[43%] h-[44%] h-[45%] h-[46%] h-[47%] h-[48%] h-[49%] h-[50%] h-[51%] h-[52%] h-[53%] h-[54%] h-[55%] h-[56%] h-[57%] h-[58%] h-[59%] h-[60%] h-[61%] h-[62%] h-[63%] h-[64%] h-[65%] h-[66%] h-[67%] h-[68%] h-[69%] h-[70%] h-[71%] h-[72%] h-[73%] h-[74%] h-[75%] h-[76%] h-[77%] h-[78%] h-[79%] h-[80%] h-[81%] h-[82%] h-[83%] h-[84%] h-[85%] h-[86%] h-[87%] h-[88%] h-[89%] h-[90%] h-[91%] h-[92%] h-[93%] h-[94%] h-[95%] h-[96%] h-[97%] h-[98%] h-[99%] h-[100%]" />
 
             <div className="flex m-2 justify-center items-center">
-                <div
-                    className="main-container mt-5 items-center text-darkblue dark:text-beige max-w-[300px] md:max-w-none">
+                <div className="main-container mt-5 items-center text-darkblue dark:text-beige max-w-[300px] md:max-w-none">
                     <div className="flex overflow-x-auto m-auto items-end">
                         {
                             mounths.map((mounth, index) => (
                                 <button onClick={() => handleMonthSelection(index)}>
-                                    <SalesPerMounth mounth={mounth} index={index} max={max} selectedMounth={selectedMounth} recaps={recaps}/>
+                                    <div className="mr-5">
+                                        <div className="flex w-full h-[128px] justify-center items-end">
+                                            <div
+                                                className={`${index == selectedMounth ? "bg-customblue" : "bg-gray-300"} w-6 h-[${Math.trunc(mounth_sum(recaps[index]) * 99 / max) + 1}%] rounded-lg hover:bg-customblue`}/>
+                                        </div>
+                                        <p className={index == selectedMounth ? "text-customblue font-bold" : ""}>{mounth}</p>
+                                    </div>
                                 </button>
                             ))
                         }
