@@ -267,6 +267,8 @@ export function VacationDisplay({offer}: { offer: any | null }) {
         location.reload()
     }
 
+    const disabled = startDateTime > new Date()
+
     return (
         <>
             <Modal className="m-auto" backdrop={"blur"} isOpen={popupOpen} onClose={togglePopup}>
@@ -291,7 +293,7 @@ export function VacationDisplay({offer}: { offer: any | null }) {
                                         }
                                     />
                                     <div className="flex-col gap-1">
-                                        <Button color="success" onClick={handleValidation}>
+                                        <Button color="success" onClick={handleValidation} isDisabled={disabled}>
                                             Valider la vacation
                                         </Button>
                                         <Button color="danger" className="mt-2">

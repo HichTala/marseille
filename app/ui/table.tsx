@@ -21,6 +21,7 @@ export default async function Table({
     let query = supabase
         .from("offres")
         .select(`*, piscine (*)`)
+        .eq("state", 0)
         .or("name.ilike.%" + piscine + "%" + ",city.ilike.%" + piscine + "%" + ",address.ilike.%" + piscine + "%", {referencedTable: 'piscine'})
         .not('piscine', 'is', null)
         .ilike("certificate", '%' + certificate + '%')

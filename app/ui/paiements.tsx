@@ -6,6 +6,8 @@ import {usePress} from "@react-aria/interactions";
 import React, {useEffect, useState} from "react";
 import {getMissions, getMissionsPaiements} from "@/app/ui/get-mission";
 import {Mission} from "@/app/lib/definition";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faChevronUp} from "@fortawesome/free-solid-svg-icons";
 
 export function AnnualTotal() {
     return (
@@ -108,6 +110,15 @@ interface PiscineRecap {
     [key: string]: number
 }
 
+function sum(piscineRecap: PiscineRecap) {
+    let price_sum = 0
+    for (let key in piscineRecap) {
+        price_sum += piscineRecap[key]
+    }
+
+    return price_sum
+}
+
 function PaiementsDetails({prices}: { prices: PiscineRecap }) {
     const recapMap = new Map<string, number>(Object.entries(prices))
 
@@ -156,7 +167,13 @@ export function DetailsFacturation() {
                     {
                         Array.from(recapMap).map(([group, prices], index) => {
                             return(
-                                <AccordionItem key="1" aria-label="Accordion 1" title={group}>
+                                <AccordionItem key={index}
+                                               title={group}
+                                               indicator={
+                                                   ({ isOpen }) => (
+                                                       isOpen ? <ChevronRightIcon className="text-xl w-6"/> : <Sales number={sum(prices)/100}/>
+                                                   )
+                                               }>
                                     <PaiementsDetails prices={prices}/>
                                 </AccordionItem>
                                 )

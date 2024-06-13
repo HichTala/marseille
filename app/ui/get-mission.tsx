@@ -11,6 +11,9 @@ export async function getMissions({offer_id}: { offer_id: string }): Promise<Mis
         .from("missions")
         .select(`*, offres(*, piscine(*)), vacataire(*)`)
         .eq('offer_id', offer_id)
+        .eq('status', 0)
+
+    console.log(missions)
 
     return missions ? missions : []
 }
@@ -22,6 +25,7 @@ export async function getMissionCount({offer_id}: { offer_id: string }): Promise
         .from("missions")
         .select('offer_id', {count: 'exact'})
         .eq('offer_id', offer_id)
+        .eq('status', 0)
 
     return count ? count : 0
 }
@@ -42,7 +46,7 @@ export async function getMissionsPaiements() {
         .from("missions")
         .select(`*, offres(*, piscine(*)), vacataire(*)`)
         .eq('user_id', user?.id)
-        .eq('status', 4)
+        .eq('status', 2)
 
     let paiements_recap: PaiementRecap = {}
 

@@ -155,7 +155,6 @@ export async function acceptVac({mission}: { mission: Mission }) {
         })
         .eq("id", mission.id)
 
-    console.log(error)
     if (error) {
         return {
             message: "Erreur de base de donnée: l'offre n'a pas pu être créer"
@@ -170,8 +169,16 @@ export async function acceptVac({mission}: { mission: Mission }) {
         })
         .eq("id", mission.offres?.id)
 
-    console.log(offres)
     if (offres) {
+        return {
+            message: "Erreur de base de donnée: l'offre n'a pas pu être créer"
+        }
+    }
+
+    const {error:mission_error} = await supabase
+        .rpc('join_missions_offers', {startdate: mission.offres?.startDatetime, enddate: mission.offres?.endDatetime})
+
+    if (mission_error) {
         return {
             message: "Erreur de base de donnée: l'offre n'a pas pu être créer"
         }

@@ -13,14 +13,11 @@ import {
     Textarea,
     TimeInput
 } from "@nextui-org/react";
-import React, {Suspense, useState} from "react";
+import React, {useState} from "react";
 import {format} from "date-fns";
-import {Time} from "@internationalized/date";
+import {getLocalTimeZone, today} from "@internationalized/date";
 import {ClockCircleLinearIcon} from "@nextui-org/shared-icons";
 import {Button} from "@nextui-org/button";
-import Search, {Datepicker, StateCheckbox} from "@/app/ui/search";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
 
 export function OfferForm({
                               offer
@@ -107,6 +104,7 @@ export function PostForm() {
                     labelPlacement="outside"
                     label="Date"
                     isRequired={true}
+                    minValue={today(getLocalTimeZone())}
                     className="max-w-[284px] w-3/5 m-1"
                 />
                 <Input
