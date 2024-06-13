@@ -186,6 +186,10 @@ export function DetailsFacturation() {
 
     const mounths = ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Jui', 'Jui', 'Aou', 'Sep', 'Oct', 'Nov', 'Dec']
 
+    mounths.map((mounth, index) => {
+        // console.log(mounth, `${index == selectedMounth ? "bg-customblue" : "bg-gray-300"} w-6 h-[${Math.trunc(mounth_sum(recaps[index]) * 99 / max) + 1}%] rounded-lg hover:bg-customblue`)
+    })
+
     return (
         <>
             <AnnualTotal total={total/100}/>
@@ -199,7 +203,7 @@ export function DetailsFacturation() {
                                     <div className="mr-5">
                                         <div className="flex w-full h-[128px] justify-center items-end">
                                             <div
-                                                className={`${index == selectedMounth ? "bg-customblue" : "bg-gray-300"} w-6 h-[1%] h-[${Math.trunc(mounth_sum(recaps[index]) * 99 / max) + 1}%] rounded-lg hover:bg-customblue`}/>
+                                                className={`${index == selectedMounth ? "bg-customblue" : "bg-gray-300"} w-6 h-[${Math.trunc(mounth_sum(recaps[index]) * 99 / max) + 1}%] rounded-lg hover:bg-customblue`}/>
                                         </div>
                                         <p className={index == selectedMounth ? "text-customblue font-bold" : ""}>{mounth}</p>
                                     </div>
