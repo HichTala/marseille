@@ -9,8 +9,8 @@ export async function GET(req: NextRequest) {
   const code = searchParams.get('code')
 
 
+  console.log(searchParams)
   if (code) {
-    console.log(code)
     await supabase.auth.exchangeCodeForSession(code)
   }
 

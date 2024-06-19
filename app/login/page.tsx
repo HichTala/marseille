@@ -44,9 +44,9 @@ export default function Login({
         const {error} = await supabase.auth.signUp({
             email,
             password,
-            options: {
-                emailRedirectTo: `${origin}:3000/auth/callback`,
-            },
+            // options: {
+            //     emailRedirectTo: `${origin}:3000/auth/callback`,
+            // },
         });
 
         if (error) {
