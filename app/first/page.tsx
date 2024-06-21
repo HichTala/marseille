@@ -24,6 +24,8 @@ export default async function Page({
     const save = async (formData: FormData) => {
         'use server'
 
+        console.log("coucou")
+
         const supabase = createClient();
 
         const nom = formData.get("nom") as string;
@@ -97,19 +99,19 @@ export default async function Page({
         const {data: dataProCard, error: storrageErrorProCard} = await supabase.storage.from('documents').upload(`pro_card_${user?.id}.${extension_pro_card}`, file_pro_card)
 
         if (storrageErrorSirenSiret) {
-            console.log(storrageErrorSirenSiret)
+            console.log("storrageErrorSirenSiret", storrageErrorSirenSiret)
         }
         if (storrageErrorCertificate) {
-            console.log(storrageErrorCertificate)
+            console.log("storrageErrorCertificate", storrageErrorCertificate)
         }
         if (storrageErrorPse) {
-            console.log(storrageErrorPse)
+            console.log("storrageErrorPse", storrageErrorPse)
         }
         if (storrageErrorInsurance) {
-            console.log(storrageErrorInsurance)
+            console.log("storrageErrorInsurance", storrageErrorInsurance)
         }
         if (storrageErrorProCard) {
-            console.log(storrageErrorProCard)
+            console.log("storrageErrorProCard", storrageErrorProCard)
         }
 
         const {error} = await supabase

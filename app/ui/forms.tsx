@@ -262,6 +262,7 @@ export function RegisterForm({
     }
 
     const handleSave = async (formData: FormData) => {
+        console.log("coucou")
         await save(formData)
         setIsLoading(false)
     }
@@ -461,7 +462,7 @@ export function RegisterForm({
                     <Input name="parrain" label="Code parrain" type="number"/>
 
                     <div className="flex gap-2 justify-end">
-                        <Button fullWidth color="primary" type="submit" onClick={handleLoading} isLoading={isLoading}>
+                        <Button fullWidth color="primary" type="submit" isLoading={isLoading}>
                             Commencer
                         </Button>
                     </div>
