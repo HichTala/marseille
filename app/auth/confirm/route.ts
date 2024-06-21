@@ -22,10 +22,12 @@ export async function GET(request: NextRequest) {
             token_hash,
         })
         if (!error) {
+            console.log(redirectTo)
             redirectTo.searchParams.delete('next')
             return NextResponse.redirect(redirectTo)
         }
     }
+
 
     // return the user to an error page with some instructions
     redirectTo.pathname = '/error'
