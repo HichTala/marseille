@@ -24,8 +24,6 @@ export default async function Page({
     const save = async (formData: FormData) => {
         'use server'
 
-        console.log("coucou")
-
         const supabase = createClient();
 
         const nom = formData.get("nom") as string;
@@ -56,7 +54,6 @@ export default async function Page({
         if (society_postal.length !== 5) {
             redirect_messages += '&society_postal=Renseignez un code postal valide'
         }
-        console.log(phone, String(Number(phone)))
         if (phone.replaceAll(' ', '').length !== 10) {
             redirect_messages += '&phone=Renseignez un numero de telephone valide'
         }
@@ -84,19 +81,17 @@ export default async function Page({
 
         const {data: {user}} = await supabase.auth.getUser()
 
-        console.log(file_siren_siret)
-
         const extension_siren_siret = file_siren_siret.name.split('.').slice(-1)[0]
         const extension_certificate = file_certificate.name.split('.').slice(-1)[0]
         const extension_pse = file_pse.name.split('.').slice(-1)[0]
         const extension_insurance = file_insurance.name.split('.').slice(-1)[0]
         const extension_pro_card = file_pro_card.name.split('.').slice(-1)[0]
 
-        const {data: dataSirenSiret, error: storrageErrorSirenSiret} = await supabase.storage.from('documents').upload(`siren_siret_${user?.id}.${extension_siren_siret}`, file_siren_siret)
-        const {data: dataCertificate, error: storrageErrorCertificate} = await supabase.storage.from('documents').upload(`certificate_${user?.id}.${extension_certificate}`, file_certificate)
-        const {data: dataPse, error: storrageErrorPse} = await supabase.storage.from('documents').upload(`pse_${user?.id}.${extension_pse}`, file_pse)
-        const {data: dataInsurance, error: storrageErrorInsurance} = await supabase.storage.from('documents').upload(`insurance_${user?.id}.${extension_insurance}`, file_insurance)
-        const {data: dataProCard, error: storrageErrorProCard} = await supabase.storage.from('documents').upload(`pro_card_${user?.id}.${extension_pro_card}`, file_pro_card)
+        const {data: dataSirenSiret, error: storrageErrorSirenSiret} = await supabase.storage.from('documents').upload(`siren_siret/siren_siret_${user?.id}.${extension_siren_siret}`, file_siren_siret)
+        const {data: dataCertificate, error: storrageErrorCertificate} = await supabase.storage.from('documents').upload(`certificate/certificate_${user?.id}.${extension_certificate}`, file_certificate)
+        const {data: dataPse, error: storrageErrorPse} = await supabase.storage.from('documents').upload(`pse/pse_${user?.id}.${extension_pse}`, file_pse)
+        const {data: dataInsurance, error: storrageErrorInsurance} = await supabase.storage.from('documents').upload(`insurance/insurance_${user?.id}.${extension_insurance}`, file_insurance)
+        const {data: dataProCard, error: storrageErrorProCard} = await supabase.storage.from('documents').upload(`pro_card/pro_card_${user?.id}.${extension_pro_card}`, file_pro_card)
 
         if (storrageErrorSirenSiret) {
             console.log("storrageErrorSirenSiret", storrageErrorSirenSiret)

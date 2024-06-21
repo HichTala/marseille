@@ -15,7 +15,7 @@ import {
     Textarea,
     TimeInput
 } from "@nextui-org/react";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {format} from "date-fns";
 import {getLocalTimeZone, today} from "@internationalized/date";
 import {ClockCircleLinearIcon} from "@nextui-org/shared-icons";
@@ -256,16 +256,28 @@ export function RegisterForm({
 }) {
 
     const [isLoading, setIsLoading] = useState(false)
+    const [formData, setFormData] = useState<FormData | null>(null);
 
-    const handleLoading = () => {
-        setIsLoading(true)
+    const handleSave = async (data: FormData) => {
+        setFormData(data);
+        setIsLoading(true);
     }
 
-    const handleSave = async (formData: FormData) => {
-        console.log("coucou")
-        await save(formData)
-        setIsLoading(false)
-    }
+    useEffect(() => {
+        const saveData = async () => {
+            if (isLoading && formData) {
+                try {
+                    await save(formData); // Replace with your actual save function
+                } catch (error) {
+                    console.error('An error occurred:', error);
+                } finally {
+                    setIsLoading(false);
+                }
+            }
+        };
+
+        saveData();
+    }, [isLoading, formData]);
 
     return (
         <Card className="px-3 pt-3 pb-8 m-5">
