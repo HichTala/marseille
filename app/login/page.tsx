@@ -39,14 +39,19 @@ export default function Login({
         const origin = headers().get("origin");
         const email = formData.get("email") as string;
         const password = formData.get("password") as string;
+
+        if (password.length < 6) {
+            return redirect("/login?message=Le mot de passe doit comporter au moins 6 caractères");
+        }
+
         const supabase = createClient();
 
         const {error} = await supabase.auth.signUp({
             email,
             password,
-            // options: {
-            //     emailRedirectTo: `${origin}:3000/auth/callback`,
-            // },
+            options: {
+                emailRedirectTo: `${origin}:3000/login`,
+            },
         });
 
         if (error) {
@@ -54,7 +59,7 @@ export default function Login({
             return redirect("/login?message=Impossible d'authentifier l'utilisateur");
         }
 
-        return redirect("/login?message=Check email to continue sign in process");
+        return redirect("/login/confirm");
     };
 
     return (

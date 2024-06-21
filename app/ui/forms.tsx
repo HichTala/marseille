@@ -3,9 +3,11 @@
 import {useFormState} from "react-dom";
 import {createMission, createOffer, StateMission, StateOffer} from "@/app/lib/actions";
 import {
+    Card,
+    CardBody,
     Checkbox,
     DatePicker,
-    Input,
+    Input, Link,
     Modal, ModalBody,
     ModalContent, ModalFooter, ModalHeader,
     Select,
@@ -92,8 +94,8 @@ export function PostForm() {
     const [state, dispatch] = useFormState<StateOffer, FormData>(createOffer, initialState)
 
     const certificates = [
-        {key: 'BNSSA', label:'BNSSA'},
-        {key: 'MNS', label:'MNS'},
+        {key: 'BNSSA', label: 'BNSSA'},
+        {key: 'MNS', label: 'MNS'},
     ]
 
     return (
@@ -231,5 +233,245 @@ function PopupRecapOffer() {
                 </Button>
             </div>
         </div>
+    )
+}
+
+export function RegisterForm({
+                                 searchParams,
+                                 save
+                             }: {
+    searchParams: {
+        message: string,
+        postal: string,
+        society_postal: string,
+        phone: string,
+        siren_siret: string,
+        certificate: string,
+        pse: string,
+        pro_insurance: string,
+        pro_card: string,
+
+    },
+    save: (formData: FormData) => Promise<never>,
+}) {
+
+    const [isLoading, setIsLoading] = useState(false)
+
+    const handleLoading = () => {
+        setIsLoading(true)
+    }
+
+    const handleSave = async (formData: FormData) => {
+        await save(formData)
+        setIsLoading(false)
+    }
+
+    return (
+        <Card className="px-3 pt-3 pb-8 m-5">
+            <CardBody className="overflow-hidden">
+                <form className="flex flex-col gap-4" action={handleSave}>
+                    <p className="font-extrabold text-xl text-darkblue mx-3">Infos personnelles</p>
+                    <div className="flex gap-3">
+                        <Input isRequired name="nom" label="Nom"/>
+                        <Input isRequired name="prenom" label="Prenom"/>
+                    </div>
+
+                    <Input isRequired name="phone" label="Téléphone" type="tel"/>
+                    {searchParams?.phone && (
+                        <p className="text-red-500 text-center text-xs">
+                            {searchParams.phone}
+                        </p>
+                    )}
+
+                    <Input isRequired name="address" label="Adresse"/>
+                    <div className="flex gap-3">
+                        <Input isRequired name="city" label="Ville"/>
+                        <div>
+                            <Input isRequired name="postal" label="Code Postal" type="number"/>
+                            {searchParams?.postal && (
+                                <p className="text-red-500 text-center text-xs">
+                                    {searchParams.postal}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+
+                    <p className="font-extrabold text-xl text-darkblue mx-3">Régime</p>
+
+                    <span className="mx-3 text-xs text-gray-700">Pour pouvoir travaille ril faut une auto entreprise blabla,</span>
+                    <span className="mx-3 text-xs text-gray-700">Vous pouvez vous inscrire sur impotsgouv.fr</span>
+                    <Link showAnchorIcon href="https://www.impots.gouv.fr/accueil">impots.gouv.fr</Link>
+
+                    <Input isRequired name="siren_siret" label="SIREN/SIRET" type="number"/>
+
+                    <label className="block">
+                        <div className="flex">
+                            <span className="text-xs text-gray-700 ml-3 mb-2">Justificatif</span> <p
+                            className="text-red-500 text-xs ml-0.5">*</p>
+                        </div>
+                        <input type="file" name="file_siren_siret" className="block w-full text-sm text-gray-500
+                            file:me-4 file:py-2 file:px-4
+                            file:rounded-lg file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-blue-600 file:text-white
+                            hover:file:bg-blue-700
+                            file:disabled:opacity-50 file:disabled:pointer-events-none
+                            dark:text-neutral-500
+                            dark:file:bg-blue-500
+                            dark:hover:file:bg-blue-400
+                          "/>
+                        {searchParams?.siren_siret && (
+                            <p className="text-red-500 text-center text-sm">
+                                {searchParams.siren_siret}
+                            </p>
+                        )}
+                    </label>
+
+                    <Input name="tva" label="Numéro de TVA (optionnel)" type="number"/>
+
+                    <Input isRequired name="society_address" label="Adresse de la société"/>
+                    <div className="flex gap-3">
+                        <Input isRequired name="society_city" label="Ville"/>
+                        <div>
+                            <Input isRequired name="society_postal" label="Code Postal" type="number"/>
+                            {searchParams?.society_postal && (
+                                <p className="text-red-500 text-center text-xs">
+                                    {searchParams.society_postal}
+                                </p>
+                            )}
+                        </div>
+
+                    </div>
+
+                    <p className="font-extrabold text-xl text-darkblue mx-3">Diplômes</p>
+
+                    <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+                        <Select
+                            isRequired
+                            name="certificate"
+                            label="Qualification"
+                        >
+                            <SelectItem key="BNSSA">
+                                BNSSA
+                            </SelectItem>
+                            <SelectItem key="MNS">
+                                MNS
+                            </SelectItem>
+                        </Select>
+                    </div>
+
+                    <label className="block">
+                        <div className="flex">
+                            <span className="text-sm mb-2">Justificatif</span> <p
+                            className="text-red-500 text-xs ml-0.5">*</p>
+                        </div>
+                        <input type="file" name="file_certificate" className="block w-full text-sm text-gray-500
+                            file:me-4 file:py-2 file:px-4
+                            file:rounded-lg file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-blue-600 file:text-white
+                            hover:file:bg-blue-700
+                            file:disabled:opacity-50 file:disabled:pointer-events-none
+                            dark:text-neutral-500
+                            dark:file:bg-blue-500
+                            dark:hover:file:bg-blue-400
+                          "/>
+                        {searchParams?.certificate && (
+                            <p className="text-red-500 text-center text-sm">
+                                {searchParams.certificate}
+                            </p>
+                        )}
+                    </label>
+
+                    <label className="block">
+                        <div className="flex">
+                            <span className="text-sm mb-2">Justificatif PSE1 ou PSE2</span> <p
+                            className="text-red-500 text-xs ml-0.5">*</p>
+                        </div>
+                        <input type="file" name="file_pse" className="block w-full text-sm text-gray-500
+                            file:me-4 file:py-2 file:px-4
+                            file:rounded-lg file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-blue-600 file:text-white
+                            hover:file:bg-blue-700
+                            file:disabled:opacity-50 file:disabled:pointer-events-none
+                            dark:text-neutral-500
+                            dark:file:bg-blue-500
+                            dark:hover:file:bg-blue-400
+                          "/>
+                        {searchParams?.pse && (
+                            <p className="text-red-500 text-center text-sm">
+                                {searchParams.pse}
+                            </p>
+                        )}
+                    </label>
+
+                    <p className="font-extrabold text-xl text-darkblue mx-3">Assurance professionnelle</p>
+
+                    <label className="block">
+                        <div className="flex">
+                            <span className="text-sm mb-2">Justificatif</span> <p
+                            className="text-red-500 text-xs ml-0.5">*</p>
+                        </div>
+                        <input type="file" name="file_insurance" className="block w-full text-sm text-gray-500
+                            file:me-4 file:py-2 file:px-4
+                            file:rounded-lg file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-blue-600 file:text-white
+                            hover:file:bg-blue-700
+                            file:disabled:opacity-50 file:disabled:pointer-events-none
+                            dark:text-neutral-500
+                            dark:file:bg-blue-500
+                            dark:hover:file:bg-blue-400
+                          "/>
+                        {searchParams?.pro_insurance && (
+                            <p className="text-red-500 text-center text-sm">
+                                {searchParams.pro_insurance}
+                            </p>
+                        )}
+                    </label>
+
+                    <p className="font-extrabold text-xl text-darkblue mx-3">Carte professionnelle ou déclaration
+                        d’activité</p>
+
+                    <label className="block">
+                        <div className="flex">
+                            <span className="text-sm mb-2">Justificatif</span> <p
+                            className="text-red-500 text-xs ml-0.5">*</p>
+                        </div>
+                        <input type="file" name="file_pro_card" className="block w-full text-sm text-gray-500
+                            file:me-4 file:py-2 file:px-4
+                            file:rounded-lg file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-blue-600 file:text-white
+                            hover:file:bg-blue-700
+                            file:disabled:opacity-50 file:disabled:pointer-events-none
+                            dark:text-neutral-500
+                            dark:file:bg-blue-500
+                            dark:hover:file:bg-blue-400
+                          "/>
+                        {searchParams?.pro_card && (
+                            <p className="text-red-500 text-center text-sm">
+                                {searchParams.pro_card}
+                            </p>
+                        )}
+                    </label>
+
+                    <p className="font-extrabold text-xl text-darkblue mx-3">Parrainage</p>
+                    <Input name="parrain" label="Code parrain" type="number"/>
+
+                    <div className="flex gap-2 justify-end">
+                        <Button fullWidth color="primary" type="submit" onClick={handleLoading} isLoading={isLoading}>
+                            Commencer
+                        </Button>
+                    </div>
+                    {searchParams?.message && (
+                        <p className="text-red-500 text-center text-sm">
+                            {searchParams.message}
+                        </p>
+                    )}
+                </form>
+            </CardBody>
+        </Card>
     )
 }

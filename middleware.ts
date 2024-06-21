@@ -12,36 +12,65 @@ export async function middleware(req: NextRequest) {
   } = await supabase.auth.getUser()
 
   // if user is signed in and the current path is / redirect the user to /account
-  if (user && req.nextUrl.pathname === '/login') {
-    const {data: piscine} = await supabase
-        .from('piscine')
-        .select()
-        .eq('id', user.id)
-    if (piscine?.length){
-      return NextResponse.redirect(new URL('/piscine/jobs', req.url))
-    } else {
-      return NextResponse.redirect(new URL('/vacataire/offres', req.url))
-    }
-  }
+  if(user) {
+    if (req.nextUrl.pathname === '/login') {
+      const {data: vacataire} = await supabase
+          .from('vacataire')
+          .select()
+          .eq('id', user.id)
 
-  if (user && req.nextUrl.pathname.startsWith('/piscine')) {
-    const {data: vacataire} = await supabase
-        .from('vacataire')
-        .select()
-        .eq('id', user.id)
-    if (vacataire?.length){
-      return NextResponse.redirect(new URL('/vacataire/offres', req.url))
-    }
-  }
+      if(vacataire?.length) {
+        return NextResponse.redirect(new URL('/vacataire/offres', req.url))
+      } else {
+        const {data: piscine} = await supabase
+            .from('piscine')
+            .select()
+            .eq('id', user.id)
 
-  if (user && req.nextUrl.pathname.startsWith('/vacataire')) {
-    const {data: piscine} = await supabase
-        .from('piscine')
-        .select()
-        .eq('id', user.id)
-    if (piscine?.length){
-      return NextResponse.redirect(new URL('/piscine/jobs', req.url))
+        if (piscine?.length) {
+          return NextResponse.redirect(new URL('/piscine/jobs', req.url))
+          } else {
+            return NextResponse.redirect(new URL('/first', req.url))
+          }
+      }
     }
+
+    if (req.nextUrl.pathname.startsWith('/piscine')) {
+      const {data: piscine} = await supabase
+          .from('piscine')
+          .select()
+          .eq('id', user.id)
+      if (!(piscine?.length)) {
+        const {data: vacataire} = await supabase
+            .from('vacataire')
+            .select()
+            .eq('id', user.id)
+        if (vacataire?.length){
+          return NextResponse.redirect(new URL('/vacataire/offres', req.url))
+        } else {
+          return NextResponse.redirect(new URL('/first', req.url))
+        }
+      }
+    }
+
+    if (user && req.nextUrl.pathname.startsWith('/vacataire')) {
+      const {data: vacataire} = await supabase
+          .from('vacataire')
+          .select()
+          .eq('id', user.id)
+      if (!(vacataire?.length)){
+        const {data: piscine} = await supabase
+            .from('piscine')
+            .select()
+            .eq('id', user.id)
+        if (piscine?.length){
+          return NextResponse.redirect(new URL('/piscine/jobs', req.url))
+        } else {
+          return NextResponse.redirect(new URL('/first', req.url))
+        }
+      }
+    }
+
   }
 
   // if user is not signed in and the current path is not / redirect the user to /
@@ -57,6 +86,7 @@ export const config = {
     '/',
     '/login',
     '/vacataire/:path*',
-    '/piscine/:path*'
+    '/piscine/:path*',
+    '/first'
   ]
 }

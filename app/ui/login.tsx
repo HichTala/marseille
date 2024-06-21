@@ -25,13 +25,14 @@ export function SignCard({signIn, signUp, searchParams}: {
                     <Tab key="login" title="Se connecter">
                         <p className="text-xl font-bold mx-auto mb-3">Se connecter</p>
                         <form className="flex flex-col gap-4" action={signIn}>
-                            <Input isRequired name="email" label="Email" placeholder="email@exemple.com"
+                            <Input isRequired name="email" label="Email"
+                                   // placeholder="email@exemple.com"
                                    type="email"/>
                             <Input
                                 isRequired
                                 name="password"
                                 label="Mot de passe"
-                                placeholder="••••••••••••••••"
+                                // placeholder="••••••••••••••••"
                                 type="password"
                             />
                             <p className="text-center text-small">
@@ -53,18 +54,24 @@ export function SignCard({signIn, signUp, searchParams}: {
                         </form>
                     </Tab>
                     <Tab key="sign-up" title="S'enregistrer">
+                        <p className="text-xl font-bold mx-auto mb-3">S'enregistrer</p>
                         <form className="flex flex-col gap-4" action={signUp}>
-                            <div className="flex gap-3">
-                                <Input isRequired name="nom" label="Nom" placeholder="Jean"/>
-                                <Input isRequired name="prenom" label="Prenom" placeholder="Dupont"/>
-                            </div>
-                            <Input isRequired name="email" label="Email" placeholder="email@exemple.com"
+                            {/*<div className="flex gap-3">*/}
+                            {/*    <Input isRequired name="nom" label="Nom"*/}
+                            {/*           // placeholder="Jean"*/}
+                            {/*    />*/}
+                            {/*    <Input isRequired name="prenom" label="Prenom"*/}
+                            {/*           // placeholder="Dupont"*/}
+                            {/*    />*/}
+                            {/*</div>*/}
+                            <Input isRequired name="email" label="Email"
+                                // placeholder="email@exemple.com"
                                    type="email"/>
                             <Input
                                 isRequired
                                 name="password"
                                 label="Mot de passe"
-                                placeholder="••••••••••••••••"
+                                // placeholder="••••••••••••••••"
                                 type="password"
                             />
                             <p className="text-center text-small">
