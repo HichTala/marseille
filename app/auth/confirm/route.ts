@@ -9,10 +9,15 @@ export async function GET(request: NextRequest) {
     const type = searchParams.get('type') as EmailOtpType | null
     const next = searchParams.get('next') ?? '/'
 
+    console.log(searchParams)
+    console.log(next)
+
     const redirectTo = request.nextUrl.clone()
     redirectTo.pathname = next
     redirectTo.searchParams.delete('token_hash')
     redirectTo.searchParams.delete('type')
+
+    console.log(redirectTo)
 
     if (token_hash && type) {
         const supabase = createClient()
