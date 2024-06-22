@@ -45,7 +45,8 @@ export function PiscineDisplay({offer}: { offer: any | null }) {
                                 <div className="text-center">
                                     <p className="text-gray-400 font-sans text-cente text-xs">Pause</p>
 
-                                    <p className="text-xs px-1">( {differenceInHours(parseISO(offer.endDatetime),parseISO(offer.startDatetime))-getHours(parse(offer.duration, 'HH:mm:ss', new Date()))}h )</p>
+                                    <p className="text-xs px-1">( {differenceInHours(parseISO(offer.endDatetime), parseISO(offer.startDatetime)) - getHours(parse(offer.duration, 'HH:mm:ss', new Date()))}h
+                                        )</p>
                                 </div>
                                 <div className="border-r-2"/>
                                 <div>
@@ -64,11 +65,13 @@ export function PiscineDisplay({offer}: { offer: any | null }) {
                                     <FontAwesomeIcon className="text-[8px]" icon={faCalendar}/>
                                     <p className="text-[8px] px-1">{format(offer.startDatetime, 'dd/MM/yyyy')}</p>
                                 </div>
-                                <div className="flex bg-customturquoise rounded-lg py-1 px-2 text-customwhite ml-1 mt-1">
+                                <div
+                                    className="flex bg-customturquoise rounded-lg py-1 px-2 text-customwhite ml-1 mt-1">
                                     <FontAwesomeIcon className="text-[8px]" icon={faClock}/>
                                     <p className="text-[8px] px-1">{format(parse(offer.duration, 'HH:mm:ss', new Date()), 'HH:mm')}</p>
                                 </div>
-                                <div className="flex bg-customturquoise rounded-lg py-1 px-2 text-customwhite ml-1 mt-1">
+                                <div
+                                    className="flex bg-customturquoise rounded-lg py-1 px-2 text-customwhite ml-1 mt-1">
                                     <FontAwesomeIcon className="text-[8px]" icon={faGraduationCap}/>
                                     <p className="text-[8px] px-1">{offer.certificate}</p>
                                 </div>
@@ -96,7 +99,9 @@ export function CalendarPropositionDisplay({mission}: { mission: any | null }) {
             className="mb-2 w-full grid justify-items-center"
         >
             <PopupEdit popupOpen={popupOpen} setIsOpen={setIsOpen} mission={mission}/>
-            <button className="w-full rounded-3xl overflow-hidden relative bg-white shadow-md text-left hover:cursor-pointer" onClick={togglePopup}>
+            <button
+                className="w-full rounded-3xl overflow-hidden relative bg-white shadow-md text-left hover:cursor-pointer"
+                onClick={togglePopup}>
                 <div className="flex">
                     <div className="p-2 flex">
                         <div className="p-1 flex">
@@ -176,7 +181,9 @@ export function PropositionDisplay({mission}: { mission: any | null }) {
             className="mb-2 w-full grid justify-items-center"
         >
             <PopupEdit popupOpen={popupOpen} setIsOpen={setIsOpen} mission={mission}/>
-            <button className="w-full rounded-3xl overflow-hidden relative bg-white shadow-md text-left hover:cursor-pointer" onClick={togglePopup}>
+            <button
+                className="w-full rounded-3xl overflow-hidden relative bg-white shadow-md text-left hover:cursor-pointer"
+                onClick={togglePopup}>
                 <div className="flex">
                     <div className="bg-blue-300 bg-green-300 bg-amber-200 bg-gray-300 bg-red-400 hidden"/>
                     <div
@@ -271,46 +278,14 @@ export function VacationDisplay({offer}: { offer: any | null }) {
 
     return (
         <>
-            <Modal className="m-auto" backdrop={"blur"} isOpen={popupOpen} onClose={togglePopup}>
-                <ModalContent>
-                    {(onClose) => (
-                        <>
-                            <ModalHeader className="flex flex-col gap-1">Noter la vacation</ModalHeader>
-                            <ModalBody>
-                                <div className="flex gap-5">
-                                    <Input
-                                        type="number"
-                                        label="Étoiles"
-                                        labelPlacement="outside"
-                                        value={value}
-                                        // @ts-ignore
-                                        onChange={setValue}
-                                        endContent={
-                                            <div className="pointer-events-none flex items-center">
-                                                <FontAwesomeIcon icon={faStar}
-                                                                 className="text-amber-400"/>
-                                            </div>
-                                        }
-                                    />
-                                    <div className="flex-col gap-1">
-                                        <Button color="success" onClick={handleValidation} isDisabled={disabled}>
-                                            Valider la vacation
-                                        </Button>
-                                        <Button color="danger" className="mt-2">
-                                            Annuler la vacation
-                                        </Button>
-                                    </div>
-                                </div>
-                            </ModalBody>
-                            <ModalFooter>
-                                <Button color="primary" onPress={onClose}>
-                                    Ok
-                                </Button>
-                            </ModalFooter>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal>
+            <ValidationModal
+                popupOpen={popupOpen}
+                handleValidation={handleValidation}
+                togglePopup={togglePopup}
+                disabled={disabled}
+                value={value}
+                setValue={setValue}
+            />
             <button className="w-full" onClick={togglePopup}>
                 <Card>
                     <CardHeader className="justify-between">
@@ -355,5 +330,57 @@ export function VacationDisplay({offer}: { offer: any | null }) {
             </button>
         </>
     );
+}
+
+export function ValidationModal({popupOpen, togglePopup, value, setValue, handleValidation, disabled}: {
+    popupOpen: boolean,
+    togglePopup: () => void,
+    value: string,
+    setValue: React.Dispatch<React.SetStateAction<string>>,
+    handleValidation: () => Promise<void>,
+    disabled: boolean
+}) {
+    return (
+        <Modal className="m-auto" backdrop={"blur"} isOpen={popupOpen} onClose={togglePopup}>
+            <ModalContent>
+                {(onClose) => (
+                    <>
+                        <ModalHeader className="flex flex-col gap-1">Noter la vacation</ModalHeader>
+                        <ModalBody>
+                            <div className="flex gap-5">
+                                <Input
+                                    type="number"
+                                    label="Étoiles"
+                                    labelPlacement="outside"
+                                    value={value}
+                                    // @ts-ignore
+                                    onChange={setValue}
+                                    endContent={
+                                        <div className="pointer-events-none flex items-center">
+                                            <FontAwesomeIcon icon={faStar}
+                                                             className="text-amber-400"/>
+                                        </div>
+                                    }
+                                />
+                                <div className="flex-col gap-1">
+                                    <Button color="success" onClick={handleValidation} isDisabled={disabled}>
+                                        Valider la vacation
+                                    </Button>
+                                    <Button color="danger" className="mt-2">
+                                        Annuler la vacation
+                                    </Button>
+                                </div>
+                            </div>
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button color="primary" onPress={onClose}>
+                                Ok
+                            </Button>
+                        </ModalFooter>
+                    </>
+                )}
+            </ModalContent>
+        </Modal>
+    )
 }
 

@@ -22,6 +22,12 @@ export type Vacataire = {
     scores: string;
     certificate: string;
     phone: string;
+    avatar: string;
+    file_siren_siret: string;
+    file_certificate: string;
+    file_pse: string;
+    file_insurance: string;
+    file_pro_card: string;
 }
 
 export type Piscine = {

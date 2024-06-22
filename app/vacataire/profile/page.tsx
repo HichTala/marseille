@@ -25,12 +25,6 @@ export default async function Page() {
     const {data: url_pro_card} = supabase.storage.from("documents")
         .getPublicUrl(vacataire?.at(0).file_pro_card)
 
-    console.log(url_siren_siret)
-    console.log(url_certificate)
-    console.log(url_pse)
-    console.log(url_insurance)
-    console.log(url_pro_card)
-
     return (
         <div className="w-full">
             <div className="w-full pt-2">
