@@ -175,7 +175,7 @@ export async function acceptVac({mission}: { mission: Mission }) {
         }
     }
 
-    const {error:mission_error} = await supabase
+    const {error: mission_error} = await supabase
         .rpc('join_missions_offers', {startdate: mission.offres?.startDatetime, enddate: mission.offres?.endDatetime})
 
     if (mission_error) {
@@ -253,8 +253,8 @@ export async function validationVac({offer, stars}: { offer: Offer, stars: numbe
     const {error: error_vacataire} = await supabase
         .from('vacataire')
         .update({
-            nb_mission: vacataires?.at(0)?.nb_mission+1,
-            scores: vacataires?.at(0)?.scores ? (vacataires?.at(0)?.scores + stars/vacataires?.at(0)?.nb_mission)*(vacataires?.at(0)?.nb_mission+1) : stars
+            nb_mission: vacataires?.at(0)?.nb_mission + 1,
+            scores: vacataires?.at(0)?.scores ? (vacataires?.at(0)?.scores * vacataires?.at(0)?.nb_mission + stars) / (vacataires?.at(0)?.nb_mission + 1) : stars
         })
         .eq("id", offer.user_id)
 

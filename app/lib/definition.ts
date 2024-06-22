@@ -21,6 +21,7 @@ export type Vacataire = {
     prenom: string;
     scores: string;
     certificate: string;
+    phone: string;
 }
 
 export type Piscine = {
