@@ -23,13 +23,15 @@ import {fr} from "date-fns/locale";
 import {PopupEdit} from "@/app/ui/popupedit";
 import {getMissions, getMissionCount} from "@/app/ui/get-mission";
 import {Card, CardBody, CardFooter, CardHeader} from "@nextui-org/card";
-import {Avatar, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader} from "@nextui-org/react";
+import {Avatar, Link, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader} from "@nextui-org/react";
 import {Button} from "@nextui-org/button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheck, faStar, faXmark} from "@fortawesome/free-solid-svg-icons";
-import {acceptVac, rejectVac} from "@/app/lib/actions";
+import {acceptVac, rejectVac, validationVac} from "@/app/lib/actions";
 import {revalidatePath} from "next/cache";
 import {redirect} from "next/navigation";
+import {createClient} from "@/utils/supabase/client";
+import {SummaryModal, ValidationModal} from "@/app/ui/display";
 
 function classNames(...classes: any[]) {
     return classes.filter(Boolean).join(' ')
@@ -109,11 +111,11 @@ export default function Calendar({offers, vacataire}: { offers: Offer[] | null, 
                                 onClick={() => setSelectedDay(day)}
                                 className={classNames(
                                     isEqual(day, selectedDay) && 'text-white',
-                                    !isEqual(day, selectedDay) && isToday(day) && 'text-indigo-600',
+                                    !isEqual(day, selectedDay) && isToday(day) && 'text-secondary',
                                     !isEqual(day, selectedDay) && !isToday(day) && isSameMonth(day, firstDayCurrentMonth) && 'text-gray-900',
                                     !isEqual(day, selectedDay) && !isToday(day) && !isSameMonth(day, firstDayCurrentMonth) && 'text-gray-400',
-                                    isEqual(day, selectedDay) && isToday(day) && 'bg-indigo-600',
-                                    isEqual(day, selectedDay) && !isToday(day) && 'bg-customblue',
+                                    isEqual(day, selectedDay) && isToday(day) && 'bg-secondary',
+                                    isEqual(day, selectedDay) && !isToday(day) && 'bg-primary',
                                     !isEqual(day, selectedDay) && 'hover:bg-gray-200',
                                     (isEqual(day, selectedDay) || isToday(day)) && 'font-semibold',
                                     'mx-auto flex h-8 w-8 items-center justify-center rounded-full'
@@ -161,8 +163,8 @@ export default function Calendar({offers, vacataire}: { offers: Offer[] | null, 
 }
 
 function OfferIndications({offer}: { offer: Offer }) {
-    // [No vac 0 avail, No vac but avail, vac ok, terminee]
-    const offer_state_color = ['bg-purple-700', 'bg-pink-400', 'bg-green-400', 'bg-purple-300']
+    // [No vac 0 avail, No vac but avail, vac ok, terminee, cancel]
+    const offer_state_color = ['bg-purple-700', 'bg-pink-400', 'bg-green-400', 'bg-purple-300', 'bg-gray-300']
 
     const [available, setAvailable] = useState(0);
 
@@ -236,9 +238,8 @@ function Offers({offer}: { offer: any }) {
     let startDateTime = parseISO(offer.startDatetime)
     let endDateTime = parseISO(offer.endDatetime)
 
-    const offer_state_color = ['border-purple-700', 'border-pink-400', 'border-green-400', 'border-purple-300']
-    const offer_state_nextui_color: ("secondary" | "danger" | "success" | "default" | "primary" | "warning" | undefined)[] = ["secondary", "danger", "success"]
-    const offer_state = ['À venir', 'Terminée']
+    const offer_state_color = ['border-purple-700', 'border-pink-400', 'border-green-400', 'border-purple-300', 'border-gray-300']
+    const offer_state_nextui_color: ("secondary" | "danger" | "success" | "default" | "primary" | "warning" | undefined)[] = ["secondary", "danger", "success", "secondary", "default"]
 
     const [missions, setMissions] = useState<Mission[]>([]);
 
@@ -260,11 +261,26 @@ function Offers({offer}: { offer: any }) {
         setIsOpen(!popupOpen);
     };
 
-    const disabled = [1, 2].includes(offer.state)
-
     const popMission = (rejected_mission: Mission) => {
         setMissions(missions.filter(mission => mission.id !== rejected_mission.id))
     }
+
+    const [popupValidation, setValidationOpen] = useState(false);
+    const [popupSummary, setSummaryOpen] = useState(false);
+    const togglePopupValidation = () => {
+        setValidationOpen(!popupValidation);
+    };
+    const togglePopupSummary = () => {
+        setSummaryOpen(!popupSummary);
+    };
+
+    const disabled = startDateTime > new Date()
+
+    const toggle = [1, 2].includes(offer.state) ? (offer.state == 1 ? togglePopupValidation : togglePopupSummary) : togglePopup
+
+    const supabase = createClient()
+    const {data: avatar} = supabase.storage.from("documents")
+        .getPublicUrl(offer.vacataire?.avatar ? offer.vacataire?.avatar : "")
 
     return (
         <>
@@ -277,7 +293,7 @@ function Offers({offer}: { offer: any }) {
                             {
                                 missions.length > 0 ?
                                     <ModalBody>
-                                        <div  className="flex-col gap-1 max-h-[450px] overflow-y-scroll">
+                                        <div  className="flex-col gap-1 max-h-[600px] overflow-y-scroll">
                                             {
                                                 missions.map((mission) => (
                                                     <CardVacataire mission={mission} offer={offer} onClose={onClose} popMission={popMission}/>
@@ -301,38 +317,30 @@ function Offers({offer}: { offer: any }) {
                     )}
                 </ModalContent>
             </Modal>
-            <button className="w-full" onClick={togglePopup} disabled={disabled}>
+
+            <ValidationModal
+                popupOpen={popupValidation}
+                togglePopup={togglePopupValidation}
+                disabled={disabled}
+                offer={offer}
+                avatar={avatar.publicUrl}
+            />
+
+            <SummaryModal
+                popupOpen={popupSummary}
+                togglePopup={togglePopupSummary}
+                disabled={disabled}
+                offer={offer}
+                avatar={avatar.publicUrl}
+            />
+
+            <button className="w-full" onClick={toggle}>
                 <Card
                     className={`border-2 ${missions.length + offer.state != 0 ? offer_state_color[offer.state] : offer_state_color[3]}`}>
                     <CardHeader className="justify-between">
                         {
                             offer.vacataire ? (
-                                <div className="flex justify-between w-full">
-                                    <div className="flex gap-5">
-                                        <Avatar isBordered color={offer_state_nextui_color[offer.state]} radius="full"
-                                                size="md"
-                                                src="https://nextui.org/avatars/avatar-1.png"/>
-                                        <div className="flex flex-col gap-1 items-start justify-center">
-                                            <h4 className="text-small font-semibold leading-none text-default-600">{offer.vacataire['nom']} {offer.vacataire['prenom']}</h4>
-                                            <h5 className="text-small tracking-tight text-default-400">
-                                                <time dateTime={offer.startDatetime}>{format(startDateTime, 'HH:mm')}</time>
-                                                -{' '}
-                                                <time dateTime={offer.endDatetime}>{format(endDateTime, 'HH:mm')}</time>
-                                            </h5>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        {
-                                            [1, 2].includes(offer.state)
-                                            &&
-                                            <>
-                                                <Button isDisabled color={offer_state_nextui_color[offer.state]} variant="flat">
-                                                    {offer_state[offer.state-1]}
-                                                </Button>
-                                            </>
-                                        }
-                                    </div>
-                                </div>
+                                <OfferVacataire offer={offer} avatar={avatar.publicUrl}/>
                             ) : (
                                 <div className="flex gap-5">
                                     <Avatar isBordered color={offer_state_nextui_color[offer.state]} radius="full"
@@ -351,13 +359,56 @@ function Offers({offer}: { offer: any }) {
                         }
                     </CardHeader>
                 </Card>
-
             </button>
         </>
     )
 }
 
-function CardVacataire({mission, offer, onClose, popMission}: { mission: Mission, offer: Offer, onClose: () => void, popMission: (rejected_mission: Mission) => void}) {
+function OfferVacataire({offer, avatar}:{offer: Offer, avatar: string}) {
+    let startDateTime = parseISO(offer.startDatetime)
+    let endDateTime = parseISO(offer.endDatetime)
+
+    const offer_state_nextui_color: ("secondary" | "danger" | "success" | "default" | "primary" | "warning" | undefined)[] = ["secondary", "danger", "success"]
+    const offer_state = ['À venir', 'Terminée']
+
+    return (
+        <div className="flex justify-between w-full">
+            <div className="flex gap-5">
+                <Avatar isBordered color={offer_state_nextui_color[offer.state]} radius="full"
+                        className="text-customwhite"
+                        size="md"
+                        showFallback
+                        src={avatar}/>
+                <div className="flex flex-col gap-1 items-start justify-center">
+                    <h4 className="text-small font-semibold leading-none text-default-600">{offer.vacataire?.nom} {offer.vacataire?.prenom}</h4>
+                    <h4 className="text-small tracking-tight text-default-400">
+                        <time dateTime={offer.startDatetime}>{format(startDateTime, 'HH:mm')}</time>
+                        -{' '}
+                        <time dateTime={offer.endDatetime}>{format(endDateTime, 'HH:mm')}</time>
+                    </h4>
+                </div>
+            </div>
+            <div>
+                {
+                    [1, 2].includes(offer.state)
+                    &&
+                    <>
+                        <Button isDisabled color={offer_state_nextui_color[offer.state]} variant="flat">
+                            {offer_state[offer.state - 1]}
+                        </Button>
+                    </>
+                }
+            </div>
+        </div>
+    )
+}
+
+function CardVacataire({mission, offer, onClose, popMission}: {
+    mission: Mission,
+    offer: Offer,
+    onClose: () => void,
+    popMission: (rejected_mission: Mission) => void
+}) {
 
     const duration = mission.offres ? mission.offres['duration'].split(':').map(Number).at(0) : null
 
@@ -372,25 +423,56 @@ function CardVacataire({mission, offer, onClose, popMission}: { mission: Mission
         popMission(mission)
     }
 
+    const supabase = createClient()
+
+    const {data: url_siren_siret} = supabase.storage.from("documents")
+        .getPublicUrl(mission.vacataire["file_siren_siret"])
+    const {data: url_certificate} = supabase.storage.from("documents")
+        .getPublicUrl(mission.vacataire["file_certificate"])
+    const {data: url_pse} = supabase.storage.from("documents")
+        .getPublicUrl(mission.vacataire["file_pse"])
+    const {data: url_insurance} = supabase.storage.from("documents")
+        .getPublicUrl(mission.vacataire["file_insurance"])
+    const {data: url_pro_card} = supabase.storage.from("documents")
+        .getPublicUrl(mission.vacataire["file_pro_card"])
+
+    const {data: avatar} = supabase.storage.from("documents")
+        .getPublicUrl(mission.vacataire["avatar"])
+
     return (
         <Card className={`border-2 my-1`}>
             <CardHeader className="justify-between">
                 <div className="flex gap-5">
-                    <Avatar isBordered color="success" radius="full" size="md"
-                            src="https://nextui.org/avatars/avatar-1.png"/>
+                    <Avatar isBordered showFallback radius="full" size="md"
+                            src={avatar.publicUrl}/>
                     <div className="flex flex-col gap-1 items-start justify-center">
                         <h4 className="text-small font-semibold leading-none text-default-600">{mission.vacataire['nom']} {mission.vacataire['prenom']}</h4>
+                        <h5 className="text-small tracking-tight text-default-400">{mission.vacataire['phone']}</h5>
                     </div>
                 </div>
-                <div className="flex justify-end items-center">
-                    <FontAwesomeIcon icon={faStar}
-                                     className="text-amber-400"/>
-                    <p className="px-1">{mission.vacataire['scores'] !== null ? mission.vacataire['scores'] : 5}</p>
+                <div>
+                    <div className="flex justify-end items-center">
+                        <FontAwesomeIcon icon={faStar}
+                                         className="text-amber-400"/>
+                        <p className="px-1">{mission.vacataire['scores'] !== null ? mission.vacataire['scores'] : 5}</p>
+                    </div>
+                    <div className="flex justify-between gap-2">
+                        <p className="text-small tracking-tight text-default-400">#Vacations: </p>
+                        <p className="text-small font-semibold text-default-400">{mission.vacataire.nb_mission}</p>
+                    </div>
+                    <div className="flex justify-between gap-2">
+                        <p className="text-small tracking-tight text-default-400">#Annulations: </p>
+                        <p className="text-small font-semibold text-default-400">{mission.vacataire.nb_annulations}</p>
+                    </div>
                 </div>
             </CardHeader>
             <CardBody>
-                <p className="text-gray-500 text-sm pt-2 hover:underline cursor-pointer dark:text-beige">premierdiplome398A34.pdf</p>
-                <p className="text-gray-500 text-sm hover:underline cursor-pointer dark:text-beige">deuxiemediplome123476.pdf</p>
+                <Link className="text-sm" showAnchorIcon
+                      href={url_certificate.publicUrl}>Diplôme {mission.vacataire["certificate"]}</Link>
+                <Link className="text-sm" showAnchorIcon href={url_pse.publicUrl}>PSE</Link>
+                <Link className="text-sm" showAnchorIcon href={url_siren_siret.publicUrl}>SIREN/SIRET</Link>
+                <Link className="text-sm" showAnchorIcon href={url_insurance.publicUrl}>Assurance professionnelle</Link>
+                <Link className="text-sm" showAnchorIcon href={url_pro_card.publicUrl}>Carte professionnelle</Link>
             </CardBody>
             <CardFooter className="gap-3 justify-between">
                 <div className="flex gap-3">

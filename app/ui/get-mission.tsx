@@ -13,7 +13,17 @@ export async function getMissions({offer_id}: { offer_id: string }): Promise<Mis
         .eq('offer_id', offer_id)
         .eq('status', 0)
 
-    console.log(missions)
+    return missions ? missions : []
+}
+
+export async function getMission({offer_id, user_id}: { offer_id: string, user_id: string }): Promise<Mission[]> {
+
+    const supabase = createServerComponentClient({cookies})
+    const {data: missions} = await supabase
+        .from("missions")
+        .select(`*, offres(*, piscine(*)), vacataire(*)`)
+        .eq('offer_id', offer_id)
+        .eq('user_id', user_id)
 
     return missions ? missions : []
 }

@@ -38,7 +38,7 @@ export function SignCard({signIn, signUp, searchParams}: {
                             <p className="text-center text-small">
                                 Pas encore de compte?{" "}
                                 <Link size="md" underline="hover" onClick={() => setSelected("sign-up")}>
-                                    S'enregistrer
+                                    S'inscrire
                                 </Link>
                             </p>
                             <div className="flex gap-2 justify-end">
@@ -53,8 +53,8 @@ export function SignCard({signIn, signUp, searchParams}: {
                             )}
                         </form>
                     </Tab>
-                    <Tab key="sign-up" title="S'enregistrer">
-                        <p className="text-xl font-bold mx-auto mb-3">S'enregistrer</p>
+                    <Tab key="sign-up" title="S'inscrire">
+                        <p className="text-xl font-bold mx-auto mb-3">S'inscrire</p>
                         <form className="flex flex-col gap-4" action={signUp}>
                             {/*<div className="flex gap-3">*/}
                             {/*    <Input isRequired name="nom" label="Nom"*/}
@@ -74,6 +74,13 @@ export function SignCard({signIn, signUp, searchParams}: {
                                 // placeholder="••••••••••••••••"
                                 type="password"
                             />
+                            <Input
+                                isRequired
+                                name="confirm_password"
+                                label="Confirmer le mot de passe"
+                                // placeholder="••••••••••••••••"
+                                type="password"
+                            />
                             <p className="text-center text-small">
                                 Déjà un compte?{" "}
                                 <Link size="md" underline="hover" onClick={() => setSelected("login")}>
@@ -82,7 +89,7 @@ export function SignCard({signIn, signUp, searchParams}: {
                             </p>
                             <div className="flex gap-2 justify-end">
                                 <Button fullWidth color="primary" type="submit">
-                                    S'enregistrer
+                                    S'inscrire
                                 </Button>
                             </div>
                             {searchParams?.message && (

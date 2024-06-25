@@ -266,3 +266,88 @@ export async function validationVac({offer, stars}: { offer: Offer, stars: numbe
     }
 
 }
+
+export async function annulationVac({offer}: { offer: Offer }) {
+    const supabase = createServerComponentClient({cookies})
+
+    if (new Date(offer.startDatetime) > new Date()) {
+        const {error} = await supabase
+            .from('offres')
+            .update({
+                state: 0
+            })
+            .eq("id", offer.id)
+
+        if (error) {
+            console.log(error)
+            return {
+                message: "Erreur de base de donnée: l'offre n'a pas pu être créer"
+            }
+        }
+
+        const {error: missions1} = await supabase
+            .from('missions')
+            .update({
+                status: 4
+            })
+            .eq("offer_id", offer.id)
+            .neq("user_id", offer.user_id)
+
+        if (missions1) {
+            console.log(missions1)
+            return {
+                message: "Erreur de base de donnée: l'offre n'a pas pu être créer"
+            }
+        }
+
+    } else {
+        const {error} = await supabase
+            .from('offres')
+            .update({
+                state: 4
+            })
+            .eq("id", offer.id)
+
+        if (error) {
+            console.log(error)
+            return {
+                message: "Erreur de base de donnée: l'offre n'a pas pu être créer"
+            }
+        }
+
+    }
+
+    const {error: missions2} = await supabase
+        .from('missions')
+        .update({
+            status: 4
+        })
+        .eq("offer_id", offer.id)
+        .eq("user_id", offer.user_id)
+
+    if (missions2) {
+        console.log(missions2)
+        return {
+            message: "Erreur de base de donnée: l'offre n'a pas pu être créer"
+        }
+    }
+
+    const {data: vacataires} = await supabase
+        .from('vacataire')
+        .select('nb_annulations')
+        .eq("id", offer.user_id)
+
+    const {error: error_vacataire} = await supabase
+        .from('vacataire')
+        .update({
+            nb_annulations: vacataires?.at(0)?.nb_annulations + 1,
+        })
+        .eq("id", offer.user_id)
+
+    console.log(error_vacataire)
+    if (error_vacataire) {
+        return {
+            message: "Erreur de base de donnée: l'offre n'a pas pu être créer"
+        }
+    }
+}

@@ -13,11 +13,24 @@ import {differenceInHours, format, getHours, parse, parseISO} from "date-fns";
 import {Button} from "@nextui-org/button";
 import {CheckIcon, XMarkIcon} from "@heroicons/react/16/solid";
 import {AcceptVacataire} from "@/app/ui/table";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {PopupEdit} from "@/app/ui/popupedit";
 import {Card, CardFooter, CardHeader} from "@nextui-org/card";
-import {Avatar, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader} from "@nextui-org/react";
-import {acceptVac, validationVac} from "@/app/lib/actions";
+import {
+    Avatar,
+    Input, Link,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    Select,
+    SelectItem, Textarea
+} from "@nextui-org/react";
+import {acceptVac, annulationVac, validationVac} from "@/app/lib/actions";
+import {createClient} from "@/utils/supabase/client";
+import {Mission} from "@/app/lib/definition";
+import {getMission, getMissions} from "@/app/ui/get-mission";
 
 export function PiscineDisplay({offer}: { offer: any | null }) {
     return (
@@ -256,7 +269,6 @@ export function PropositionDisplay({mission}: { mission: any | null }) {
 }
 
 export function VacationDisplay({offer}: { offer: any | null }) {
-    const [value, setValue] = useState("5");
 
     let startDateTime = parseISO(offer.startDatetime)
     let endDateTime = parseISO(offer.endDatetime)
@@ -269,31 +281,29 @@ export function VacationDisplay({offer}: { offer: any | null }) {
         setIsOpen(!popupOpen);
     };
 
-    const handleValidation = async () => {
-        await validationVac({stars: Number(value), offer})
-        location.reload()
-    }
-
     const disabled = startDateTime > new Date()
+
+    const supabase = createClient()
+    const {data: avatar} = supabase.storage.from("documents")
+        .getPublicUrl(offer.vacataire?.avatar ? offer.vacataire?.avatar : "")
 
     return (
         <>
             <ValidationModal
                 popupOpen={popupOpen}
-                handleValidation={handleValidation}
                 togglePopup={togglePopup}
                 disabled={disabled}
-                value={value}
-                setValue={setValue}
+                offer={offer}
+                avatar={avatar.publicUrl}
             />
             <button className="w-full" onClick={togglePopup}>
                 <Card>
                     <CardHeader className="justify-between">
                         <div className="flex justify-between w-full">
                             <div className="flex gap-5">
-                                <Avatar isBordered color="danger" radius="full"
+                                <Avatar isBordered showFallback color="danger" radius="full"
                                         size="md"
-                                        src="https://nextui.org/avatars/avatar-1.png"/>
+                                        src={avatar.publicUrl}/>
                                 <div className="flex flex-col gap-1 items-start justify-center">
                                     <h4 className="text-small font-semibold leading-none text-default-600">{offer.vacataire['nom']} {offer.vacataire['prenom']}</h4>
                                     <h5 className="text-small tracking-tight text-default-400">
@@ -332,14 +342,27 @@ export function VacationDisplay({offer}: { offer: any | null }) {
     );
 }
 
-export function ValidationModal({popupOpen, togglePopup, value, setValue, handleValidation, disabled}: {
+export function ValidationModal({popupOpen, togglePopup, disabled, offer, avatar}: {
     popupOpen: boolean,
     togglePopup: () => void,
-    value: string,
-    setValue: React.Dispatch<React.SetStateAction<string>>,
-    handleValidation: () => Promise<void>,
-    disabled: boolean
+    disabled: boolean,
+    offer: any
+    avatar: string
 }) {
+    const [value, setValue] = useState("5");
+
+    const handleValidation = async () => {
+        await validationVac({stars: Number(value), offer})
+        location.reload()
+    }
+    const handleAnnulation = async () => {
+        await annulationVac({offer})
+        location.reload()
+    }
+
+    const handleSelectionChange = (e: any) => {
+        setValue(e.target.value);
+    };
     return (
         <Modal className="m-auto" backdrop={"blur"} isOpen={popupOpen} onClose={togglePopup}>
             <ModalContent>
@@ -348,31 +371,197 @@ export function ValidationModal({popupOpen, togglePopup, value, setValue, handle
                         <ModalHeader className="flex flex-col gap-1">Noter la vacation</ModalHeader>
                         <ModalBody>
                             <div className="flex gap-5">
-                                <Input
-                                    type="number"
-                                    label="Étoiles"
-                                    labelPlacement="outside"
-                                    value={value}
-                                    // @ts-ignore
-                                    onChange={setValue}
-                                    endContent={
-                                        <div className="pointer-events-none flex items-center">
-                                            <FontAwesomeIcon icon={faStar}
-                                                             className="text-amber-400"/>
-                                        </div>
-                                    }
-                                />
-                                <div className="flex-col gap-1">
-                                    <Button color="success" onClick={handleValidation} isDisabled={disabled}>
-                                        Valider la vacation
-                                    </Button>
-                                    <Button color="danger" className="mt-2">
-                                        Annuler la vacation
-                                    </Button>
+                                <Avatar isBordered showFallback color="danger" radius="full"
+                                        size="md"
+                                        src={avatar}/>
+                                <div className="flex flex-col gap-1 items-start justify-center">
+                                    <h4 className="text-small font-semibold leading-none text-default-600">{offer.vacataire['nom']} {offer.vacataire['prenom']}</h4>
+                                    <h5 className="text-small tracking-tight text-default-400">{offer.vacataire?.phone}</h5>
                                 </div>
                             </div>
+
+                            <div className="flex w-full justify-between px-5 py-2">
+                                <div className="text-center">
+                                    <p className="text-gray-400 font-sans text-cente text-xs">Début</p>
+                                    <p className="text-xs px-1">{format(offer.startDatetime, 'HH:mm')}</p>
+                                </div>
+                                <div className="border-r-2"/>
+                                <div className="text-center">
+                                    <p className="text-gray-400 font-sans text-cente text-xs">Pause</p>
+
+                                    <p className="text-xs px-1">( {differenceInHours(parseISO(offer.endDatetime), parseISO(offer.startDatetime)) - getHours(parse(offer.duration, 'HH:mm:ss', new Date()))}h
+                                        )</p>
+                                </div>
+                                <div className="border-r-2"/>
+                                <div>
+                                    <p className="text-center text-gray-400 font-sans text-cente text-xs">Fin</p>
+                                    <p className="text-xs px-1">{format(offer.endDatetime, 'HH:mm')}</p>
+                                </div>
+                            </div>
+
+                            <Select
+                                label="Étoiles"
+                                labelPlacement="outside"
+                                selectedKeys={[value]}
+                                onChange={handleSelectionChange}
+                                className="max-w-xs"
+                                endContent={
+                                    <div className="pointer-events-none flex items-center">
+                                        <FontAwesomeIcon icon={faStar}
+                                                         className="text-amber-400"/>
+                                    </div>
+                                }>
+                                {
+                                    [
+                                        {key: 0, label: "0"},
+                                        {key: 1, label: "1"},
+                                        {key: 2, label: "2"},
+                                        {key: 3, label: "3"},
+                                        {key: 4, label: "4"},
+                                        {key: 5, label: "5"}
+                                    ].map((score) => (
+                                        <SelectItem key={score.key}>
+                                            {score.label}
+                                        </SelectItem>
+                                    ))
+                                }
+                            </Select>
+
+                            <Textarea label="Commentaire" className="max-w-xs" />
+
                         </ModalBody>
                         <ModalFooter>
+                            <div className="flex gap-1">
+                                <Button color="success" onClick={handleValidation} isDisabled={disabled}>
+                                    Valider la vacation
+                                </Button>
+                                <Button color="danger" onClick={handleAnnulation}>
+                                    Annuler la vacation
+                                </Button>
+                            </div>
+                        </ModalFooter>
+                    </>
+                )}
+            </ModalContent>
+        </Modal>
+    )
+}
+
+export function SummaryModal({popupOpen, togglePopup, disabled, offer, avatar}: {
+    popupOpen: boolean,
+    togglePopup: () => void,
+    disabled: boolean,
+    offer: any
+    avatar: string
+}) {
+
+    const [mission, setMission] = useState<Mission | undefined>(undefined);
+    useEffect(() => {
+        const fetchMission = async () => {
+            try {
+                const offer_id: string = offer.id
+                const user_id: string = offer.vacataire.id
+                const result = (await getMission({offer_id, user_id})).at(0);
+                setMission(result);
+            } catch (error) {
+                console.error('Error fetching data: ', error)
+            }
+        };
+        fetchMission();
+    })
+
+    const duration = offer['duration'].split(':').map(Number).at(0)
+
+    const supabase = createClient()
+
+    const {data: url_siren_siret} = supabase.storage.from("documents")
+        .getPublicUrl(mission ? mission.vacataire["file_siren_siret"] : "")
+    const {data: url_certificate} = supabase.storage.from("documents")
+        .getPublicUrl(mission ? mission.vacataire["file_certificate"] : "")
+    const {data: url_pse} = supabase.storage.from("documents")
+        .getPublicUrl(mission ? mission.vacataire["file_pse"] : "")
+    const {data: url_insurance} = supabase.storage.from("documents")
+        .getPublicUrl(mission ? mission.vacataire["file_insurance"] : "")
+    const {data: url_pro_card} = supabase.storage.from("documents")
+        .getPublicUrl(mission ? mission.vacataire["file_pro_card"] : "")
+
+    return (
+        <Modal className="m-auto" backdrop={"blur"} isOpen={popupOpen} onClose={togglePopup}>
+            <ModalContent>
+                {(onClose) => (
+                    <>
+                        <ModalHeader className="flex flex-col gap-1">Résumer de la Vacation</ModalHeader>
+                        <ModalBody>
+                            <div className="flex justify-between">
+                                <div className="flex gap-5">
+                                    <Avatar isBordered showFallback color="success" radius="full"
+                                            size="md"
+                                            src={avatar}/>
+                                    <div className="flex flex-col gap-1 items-start justify-center">
+                                        <h4 className="text-small font-semibold leading-none text-default-600">{offer.vacataire['nom']} {offer.vacataire['prenom']}</h4>
+                                        <h5 className="text-small tracking-tight text-default-400">{offer.vacataire?.phone}</h5>
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-end items-center">
+                                    <FontAwesomeIcon icon={faStar}
+                                                     className="text-amber-400"/>
+                                    <p className="px-1">{offer.vacataire['scores'] !== null ? offer.vacataire['scores'] : 5}</p>
+                                </div>
+                            </div>
+
+                            <div className="flex w-full justify-between px-5 py-2">
+                                <div className="text-center">
+                                    <p className="text-gray-400 font-sans text-cente text-xs">Début</p>
+                                    <p className="text-xs px-1">{format(offer.startDatetime, 'HH:mm')}</p>
+                                </div>
+                                <div className="border-r-2"/>
+                                <div className="text-center">
+                                    <p className="text-gray-400 font-sans text-cente text-xs">Pause</p>
+
+                                    <p className="text-xs px-1">( {differenceInHours(parseISO(offer.endDatetime), parseISO(offer.startDatetime)) - getHours(parse(offer.duration, 'HH:mm:ss', new Date()))}h
+                                        )</p>
+                                </div>
+                                <div className="border-r-2"/>
+                                <div>
+                                    <p className="text-center text-gray-400 font-sans text-cente text-xs">Fin</p>
+                                    <p className="text-xs px-1">{format(offer.endDatetime, 'HH:mm')}</p>
+                                </div>
+                            </div>
+
+                            <div className="flex-col">
+                                <div>
+                                    <Link className="text-sm" showAnchorIcon
+                                          href={url_certificate.publicUrl}>Diplôme {mission?.vacataire["certificate"]}</Link>
+                                </div>
+
+                                <div>
+                                    <Link className="text-sm" showAnchorIcon href={url_pse.publicUrl}>PSE</Link>
+                                </div>
+
+                                <div>
+                                    <Link className="text-sm" showAnchorIcon href={url_siren_siret.publicUrl}>SIREN/SIRET</Link>
+                                </div>
+                                <div>
+                                    <Link className="text-sm" showAnchorIcon href={url_insurance.publicUrl}>Assurance professionnelle</Link>
+                                </div>
+                                <div>
+                                    <Link className="text-sm" showAnchorIcon href={url_pro_card.publicUrl}>Carte professionnelle</Link>
+                                </div>
+                            </div>
+
+                        </ModalBody>
+                        <ModalFooter className="gap-3 justify-between">
+                            <div className="flex gap-3">
+                                <div className="flex gap-1">
+                                    <p className="font-semibold text-default-400 text-small">{mission?.price ? mission?.price / 100 : "_"}</p>
+                                    <p className=" text-default-400 text-small">€</p>
+                                </div>
+                                <div className="flex gap-1">
+                                    <p className="font-semibold text-default-400 text-small">{mission?.price ? (mission?.price / 100 / duration).toFixed(2) : '_'}</p>
+                                    <p className=" text-default-400 text-small">€/Heures</p>
+                                </div>
+                            </div>
                             <Button color="primary" onPress={onClose}>
                                 Ok
                             </Button>

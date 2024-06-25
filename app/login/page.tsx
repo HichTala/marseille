@@ -39,9 +39,13 @@ export default function Login({
         const origin = headers().get("origin");
         const email = formData.get("email") as string;
         const password = formData.get("password") as string;
+        const confirm_password = formData.get("confirm_password") as string;
 
         if (password.length < 6) {
             return redirect("/login?message=Le mot de passe doit comporter au moins 6 caractères");
+        }
+        if (confirm_password != password) {
+            return redirect("/login?message=Les mots de passe doivent correspondre");
         }
 
         const supabase = createClient();

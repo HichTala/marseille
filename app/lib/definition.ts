@@ -22,6 +22,8 @@ export type Vacataire = {
     scores: string;
     certificate: string;
     phone: string;
+    nb_mission: number;
+    nb_annulations: number;
     avatar: string;
     file_siren_siret: string;
     file_certificate: string;
