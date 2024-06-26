@@ -3,7 +3,7 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMagnifyingGlass, faXmark} from "@fortawesome/free-solid-svg-icons";
 import React, {Suspense, useState} from "react";
-import Search, {Datepicker, List, StateCheckbox} from "@/app/ui/search";
+import {Datepicker, List, Search, SearchValidation, StateCheckbox, StateCheckboxValidation} from "@/app/ui/search";
 import {Modal, ModalBody, ModalContent, ModalFooter, ModalHeader} from "@nextui-org/react";
 import {Button} from "@nextui-org/button";
 
@@ -143,6 +143,50 @@ export function PopupFiltreProposition({currentState}: { currentState: string[] 
                 <div
                     className="w-full cursor-pointer max-w-[400px] bg-white h-[70px] md:h-[80px] flex items-center justify-between rounded-full mt-5 border-8 border-customturquoise hover:border-customblue shadow-md">
                     <p className="text-darkblue px-5">Filtrer les propositions</p>
+                    <div
+                        className="text-customwhite font-bold text-xl mx-3 py-2 px-3 bg-customturquoise hover:bg-customblue rounded-2xl">
+                        <FontAwesomeIcon icon={faMagnifyingGlass}/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export function PopupFiltreValidation({currentState}: { currentState: string[] }) {
+
+    const [popupOpen, setIsOpen] = useState(false);
+    const togglePopup = () => {
+        setIsOpen(!popupOpen);
+    };
+
+    return (
+        <div className="w-full grid justify-items-center">
+            <Modal className="m-auto" backdrop={"blur"} isOpen={popupOpen} onClose={togglePopup}>
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader className="flex flex-col gap-1">Filtrer les Vacations</ModalHeader>
+                            <ModalBody>
+                                <Suspense>
+                                    <SearchValidation placeholder="Rechercher Vacataire"/>
+                                    <Datepicker/>
+                                    <StateCheckboxValidation currentState={currentState}/>
+                                </Suspense>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button color="primary" onPress={onClose}>
+                                    Ok
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+            <div className="w-full flex justify-center" onClick={togglePopup}>
+                <div
+                    className="w-full cursor-pointer max-w-[400px] bg-white h-[70px] md:h-[80px] flex items-center justify-between rounded-full mt-5 border-8 border-customturquoise hover:border-customblue shadow-md">
+                    <p className="text-darkblue px-5">Filtrer les vacations</p>
                     <div
                         className="text-customwhite font-bold text-xl mx-3 py-2 px-3 bg-customturquoise hover:bg-customblue rounded-2xl">
                         <FontAwesomeIcon icon={faMagnifyingGlass}/>

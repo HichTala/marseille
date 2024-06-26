@@ -5,7 +5,7 @@ import {cookies} from "next/headers";
 import {PiscineDisplay, PropositionDisplay, VacationDisplay} from "@/app/ui/display";
 import {redirect} from "next/navigation";
 import React from "react";
-import {ChipContainer} from "@/app/ui/chip";
+import {ChipContainer, ChipContainerPiscine} from "@/app/ui/chip";
 
 export default async function Table({
                                         piscine,
@@ -103,21 +103,43 @@ export async function PropositionsTable({
 }
 
 
-export async function VacationTable() {
+export async function VacationTable({
+                                        vacataire,
+                                        date,
+                                        state
+                                    }: {
+    vacataire: string;
+    date?: Date | null;
+    state: string
+}) {
     const supabase = createServerComponentClient({cookies})
+
+    const stateFilter = state != "" ? '(' + state + ')' : '(0, 1, 2, 3, 4)'
 
     // const dateFilter: { date: Date } | {} = date !== null ? {date} : {};
 
-    const {data: offers} = await supabase
+    const {data: {user}} = await supabase.auth.getUser()
+    let query = supabase
         .from("offres")
         .select(`*, vacataire(*)`)
-        .eq('state', 1)
-        // .not('offres.vacataire', 'is', null)
-    // .or("name.ilike.%" + piscine + "%" + ",city.ilike.%" + piscine + "%" + ",address.ilike.%" + piscine + "%")
-    // .match(dateFilter)
+        .eq('piscine_id', user?.id)
+        .or("nom.ilike.%" + vacataire + "%" + ",prenom.ilike.%" + vacataire + "%", {referencedTable: 'vacataire'})
+        .filter("state", "in", stateFilter)
+
+    if (date){
+        let startDate = new Date(date)
+        let endDate = new Date(date)
+        endDate.setDate(endDate.getDate() + 1)
+
+        query = query.gte('offres.startDatetime', startDate?.toISOString())
+        query = query.lt('offres.startDatetime', endDate?.toISOString())
+    }
+
+    const {data: offers} = await query
 
     return (
         <div className="mt-6 flow-root w-full">
+            <ChipContainerPiscine vacataire={vacataire} certificate={""} date={date} states={state != "" ? state.split(",").map(Number) : []}/>
             <div className="grid justify-items-center grid-cols-1 gap-4">
                 {offers?.map((offer) => (
                     <VacationDisplay offer={offer}/>

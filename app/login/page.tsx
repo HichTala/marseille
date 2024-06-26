@@ -50,7 +50,6 @@ export default function Login({
 
         const supabase = createClient();
 
-        console.log(origin)
         const {error} = await supabase.auth.signUp({
             email,
             password,

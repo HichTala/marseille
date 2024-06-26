@@ -234,7 +234,7 @@ function VacataireOffers({offer}: { offer: any }) {
     )
 }
 
-function Offers({offer}: { offer: any }) {
+export function Offers({offer}: { offer: any }) {
     let startDateTime = parseISO(offer.startDatetime)
     let endDateTime = parseISO(offer.endDatetime)
 
@@ -282,6 +282,8 @@ function Offers({offer}: { offer: any }) {
     const {data: avatar} = supabase.storage.from("documents")
         .getPublicUrl(offer.vacataire?.avatar ? offer.vacataire?.avatar : "")
 
+    const isPassed = (new Date(offer.startDatetime) < new Date()) && (offer.state == 1)
+
     return (
         <>
             <Modal className="m-auto" backdrop={"blur"} isOpen={popupOpen} onClose={togglePopup}>
@@ -293,7 +295,7 @@ function Offers({offer}: { offer: any }) {
                             {
                                 missions.length > 0 ?
                                     <ModalBody>
-                                        <div  className="flex-col gap-1 max-h-[600px] overflow-y-scroll">
+                                        <div  className="flex-col gap-1 max-h-[400px] overflow-y-scroll">
                                             {
                                                 missions.map((mission) => (
                                                     <CardVacataire mission={mission} offer={offer} onClose={onClose} popMission={popMission}/>
@@ -336,11 +338,11 @@ function Offers({offer}: { offer: any }) {
 
             <button className="w-full" onClick={toggle}>
                 <Card
-                    className={`border-2 ${missions.length + offer.state != 0 ? offer_state_color[offer.state] : offer_state_color[3]}`}>
+                    className={`border-2 ${missions.length + offer.state != 0 ? (isPassed ? "border-blue-300" : offer_state_color[offer.state]) : offer_state_color[3]}`}>
                     <CardHeader className="justify-between">
                         {
                             offer.vacataire ? (
-                                <OfferVacataire offer={offer} avatar={avatar.publicUrl}/>
+                                <OfferVacataire offer={offer} avatar={avatar.publicUrl} isPassed={isPassed}/>
                             ) : (
                                 <div className="flex gap-5">
                                     <Avatar isBordered color={offer_state_nextui_color[offer.state]} radius="full"
@@ -348,6 +350,10 @@ function Offers({offer}: { offer: any }) {
                                     <div className="flex flex-col gap-1 items-start justify-center">
                                         <h4 className="text-small font-semibold leading-none text-default-600">Pas de
                                             vacataire sélectionné</h4>
+                                        <h4 className="text-small tracking-tight text-default-400">
+                                            <time
+                                                dateTime={offer.startDatetime}>{format(startDateTime, 'dd/MM/yy')}</time>
+                                        </h4>
                                         <h5 className="text-small tracking-tight text-default-400">
                                             <time dateTime={offer.startDatetime}>{format(startDateTime, 'HH:mm')}</time>
                                             -{' '}
@@ -364,7 +370,7 @@ function Offers({offer}: { offer: any }) {
     )
 }
 
-function OfferVacataire({offer, avatar}:{offer: Offer, avatar: string}) {
+function OfferVacataire({offer, avatar, isPassed}:{offer: Offer, avatar: string, isPassed: boolean}) {
     let startDateTime = parseISO(offer.startDatetime)
     let endDateTime = parseISO(offer.endDatetime)
 
@@ -374,7 +380,7 @@ function OfferVacataire({offer, avatar}:{offer: Offer, avatar: string}) {
     return (
         <div className="flex justify-between w-full">
             <div className="flex gap-5">
-                <Avatar isBordered color={offer_state_nextui_color[offer.state]} radius="full"
+                <Avatar isBordered color={isPassed ? "primary" : offer_state_nextui_color[offer.state]} radius="full"
                         className="text-customwhite"
                         size="md"
                         showFallback
@@ -382,8 +388,11 @@ function OfferVacataire({offer, avatar}:{offer: Offer, avatar: string}) {
                 <div className="flex flex-col gap-1 items-start justify-center">
                     <h4 className="text-small font-semibold leading-none text-default-600">{offer.vacataire?.nom} {offer.vacataire?.prenom}</h4>
                     <h4 className="text-small tracking-tight text-default-400">
+                        <time dateTime={offer.startDatetime}>{format(startDateTime, 'dd/MM/yy')}</time>
+                    </h4>
+                    <h4 className="text-small tracking-tight text-default-400">
                         <time dateTime={offer.startDatetime}>{format(startDateTime, 'HH:mm')}</time>
-                        -{' '}
+                        {' - '}
                         <time dateTime={offer.endDatetime}>{format(endDateTime, 'HH:mm')}</time>
                     </h4>
                 </div>
@@ -393,8 +402,8 @@ function OfferVacataire({offer, avatar}:{offer: Offer, avatar: string}) {
                     [1, 2].includes(offer.state)
                     &&
                     <>
-                        <Button isDisabled color={offer_state_nextui_color[offer.state]} variant="flat">
-                            {offer_state[offer.state - 1]}
+                        <Button isDisabled color={isPassed ? "primary" : offer_state_nextui_color[offer.state]} variant="flat">
+                            {isPassed ? "Passée" : offer_state[offer.state - 1]}
                         </Button>
                     </>
                 }

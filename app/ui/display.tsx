@@ -31,6 +31,7 @@ import {acceptVac, annulationVac, validationVac} from "@/app/lib/actions";
 import {createClient} from "@/utils/supabase/client";
 import {Mission} from "@/app/lib/definition";
 import {getMission, getMissions} from "@/app/ui/get-mission";
+import {Offers} from "@/app/ui/calendar";
 
 export function PiscineDisplay({offer}: { offer: any | null }) {
     return (
@@ -289,55 +290,7 @@ export function VacationDisplay({offer}: { offer: any | null }) {
 
     return (
         <>
-            <ValidationModal
-                popupOpen={popupOpen}
-                togglePopup={togglePopup}
-                disabled={disabled}
-                offer={offer}
-                avatar={avatar.publicUrl}
-            />
-            <button className="w-full" onClick={togglePopup}>
-                <Card>
-                    <CardHeader className="justify-between">
-                        <div className="flex justify-between w-full">
-                            <div className="flex gap-5">
-                                <Avatar isBordered showFallback color="danger" radius="full"
-                                        size="md"
-                                        src={avatar.publicUrl}/>
-                                <div className="flex flex-col gap-1 items-start justify-center">
-                                    <h4 className="text-small font-semibold leading-none text-default-600">{offer.vacataire['nom']} {offer.vacataire['prenom']}</h4>
-                                    <h5 className="text-small tracking-tight text-default-400">
-                                        <time dateTime={offer.startDatetime}>{format(startDateTime, 'HH:mm')}</time>
-                                        -{' '}
-                                        <time dateTime={offer.endDatetime}>{format(endDateTime, 'HH:mm')}</time>
-                                    </h5>
-                                </div>
-                            </div>
-                            <div>
-                                {
-                                    [1, 2].includes(offer.state)
-                                    &&
-                                    <>
-                                        <Button isDisabled color="danger"
-                                                variant="flat">
-                                            À venir
-                                        </Button>
-                                    </>
-                                }
-                            </div>
-                        </div>
-                    </CardHeader>
-                    <CardFooter>
-                        <div className="flex gap-3 justify-end w-full">
-                            <div className="flex gap-1">
-                                <p className="font-semibold text-default-400 text-small">
-                                    <time dateTime={offer.startDatetime}>{format(startDateTime, 'dd/MM/yyyy')}</time>
-                                </p>
-                            </div>
-                        </div>
-                    </CardFooter>
-                </Card>
-            </button>
+            <Offers offer={offer}/>
         </>
     );
 }

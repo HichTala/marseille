@@ -200,8 +200,6 @@ function PopupRecapOffer() {
         setIsOpen(!popupOpen);
     };
 
-    console.log(popupOpen)
-
     return (
         <div>
             <div className="w-full grid justify-items-center">
