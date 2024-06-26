@@ -2,7 +2,7 @@
 
 import {createServerComponentClient} from "@supabase/auth-helpers-nextjs";
 import {cookies} from "next/headers";
-import {Mission} from "@/app/lib/definition";
+import {Mission, Offer} from "@/app/lib/definition";
 
 export async function getMissions({offer_id}: { offer_id: string }): Promise<Mission[]> {
 
@@ -85,6 +85,34 @@ export async function getMissionsPaiements() {
                     piscine_recap[mission.offres?.piscine?.name] = mission.price
                     paiements_recap[mounth][mission.offres?.piscine?.name] = piscine_recap
                 }
+            }
+        }
+    })
+
+    // console.log(paiements_recap)
+
+    return paiements_recap
+}
+
+export async function getMissionsPaiementsPiscine() {
+    const supabase = createServerComponentClient({cookies})
+    const {data: {user},} = await supabase.auth.getUser()
+
+    const {data: missions} = await supabase
+        .from("missions")
+        .select(`*, offres(*, piscine(*)), vacataire(*)`)
+        .eq('offres.piscine_id', user?.id)
+        .eq('status', 2)
+
+    let paiements_recap: PiscineRecap[] = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
+
+    missions?.map((mission: Mission) => {
+        if (mission.offres){
+            let mounth = Number(mission.offres.startDatetime.split('-')[1])-1
+            if (paiements_recap[mounth][mission.vacataire.nom + " " + mission.vacataire.prenom] !== undefined) {
+                paiements_recap[mounth][mission.vacataire.nom + " " + mission.vacataire.prenom] = paiements_recap[mounth][mission.vacataire.nom + " " + mission.vacataire.prenom] + mission.price
+            } else {
+                paiements_recap[mounth][mission.vacataire.nom + " " + mission.vacataire.prenom] = mission.price
             }
         }
     })

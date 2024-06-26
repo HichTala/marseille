@@ -93,7 +93,7 @@ export function Profile({vacataire, user, url_siren_siret, url_certificate, url_
                         labelPlacement="outside"
                     />
                     <Link className="mb-2" showAnchorIcon href={url_siren_siret}>Justificatif</Link>
-                    <FontAwesomeIcon className="mb-3 text-primary" icon={faPenToSquare}/>
+                    <FontAwesomeIcon className="mb-3 text-primary cursor-pointer" icon={faPenToSquare}/>
                 </div>
 
                 <Input
@@ -139,11 +139,11 @@ export function Profile({vacataire, user, url_siren_siret, url_certificate, url_
             <form className="p-2 flex flex-col gap-4">
                 <div className="flex items-end justify-between gap-5">
                     <Link className="mb-2" showAnchorIcon href={url_certificate}>Diplôme {vacataire?.at(0).certificate}</Link>
-                    <FontAwesomeIcon className="mb-2 text-primary" icon={faPenToSquare}/>
+                    <FontAwesomeIcon className="mb-2 text-primary cursor-pointer" icon={faPenToSquare}/>
                 </div>
                 <div className="flex items-end justify-between gap-5">
                     <Link className="mb-2" showAnchorIcon href={url_pse}>Diplôme PSE</Link>
-                    <FontAwesomeIcon className="mb-2 text-primary" icon={faPenToSquare}/>
+                    <FontAwesomeIcon className="mb-3 text-primary cursor-pointer" icon={faPenToSquare}/>
                 </div>
 
                 <div className="flex mt-5 justify-end">
@@ -164,7 +164,7 @@ export function Profile({vacataire, user, url_siren_siret, url_certificate, url_
             <form className="p-2 flex flex-col gap-4">
                 <div className="flex items-end justify-between gap-5">
                     <Link className="mb-2" showAnchorIcon href={url_insurance}>Assurance professionnelle</Link>
-                    <FontAwesomeIcon className="mb-2 text-primary" icon={faPenToSquare}/>
+                    <FontAwesomeIcon className="mb-3 text-primary cursor-pointer" icon={faPenToSquare}/>
                 </div>
 
                 <div className="flex mt-5 justify-end">
@@ -184,8 +184,8 @@ export function Profile({vacataire, user, url_siren_siret, url_certificate, url_
 
             <form className="p-2 flex flex-col gap-4">
                 <div className="flex items-end justify-between gap-5">
-                    <Link className="mb-2" showAnchorIcon href={url_insurance}>Carte professionnelle</Link>
-                    <FontAwesomeIcon className="mb-2 text-primary" icon={faPenToSquare}/>
+                    <Link className="mb-2" showAnchorIcon href={url_pro_card}>Carte professionnelle</Link>
+                    <FontAwesomeIcon className="mb-3 text-primary cursor-pointer" icon={faPenToSquare}/>
                 </div>
 
                 <div className="flex mt-5 justify-end">
@@ -214,7 +214,13 @@ export function Profile({vacataire, user, url_siren_siret, url_certificate, url_
     )
 }
 
-export function ProfilePiscine({piscine, user}: { piscine: any | null, user: any | null }) {
+export function ProfilePiscine({piscine, user, url_siren_siret, url_insurance, url_pro_card}: {
+    piscine: any | null,
+    user: any | null,
+    url_siren_siret: string,
+    url_insurance: string,
+    url_pro_card: string
+}) {
     return (
         <div className="p-5">
             <div className="flex justify-between">
@@ -228,18 +234,38 @@ export function ProfilePiscine({piscine, user}: { piscine: any | null, user: any
                 Informations personnels
             </h1>
 
-            <form className="p-2">
-                <div className="mt-10">
+            <form className="p-2 flex flex-col gap-4">
+                <Input
+                    type="email"
+                    label="Email"
+                    placeholder={user?.email}
+                    labelPlacement="outside"
+                    startContent={
+                        <MailIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0"/>
+                    }
+                />
+
+                <Input
+                    placeholder={piscine?.at(0).address}
+                    name="address"
+                    labelPlacement="outside"
+                    label="Adresse"/>
+                <div className="flex gap-3">
                     <Input
-                        type="email"
-                        label="Email"
-                        placeholder={user?.email}
+                        placeholder={piscine?.at(0).city}
                         labelPlacement="outside"
-                        startContent={
-                            <MailIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0"/>
-                        }
-                    />
+                        name="city"
+                        label="Ville"/>
+                    <div>
+                        <Input
+                            placeholder={piscine?.at(0).postal}
+                            name="postal"
+                            labelPlacement="outside"
+                            label="Code Postal"
+                            type="number"/>
+                    </div>
                 </div>
+
                 <div className="flex mt-5 justify-end">
                     <button
                         type="submit"
@@ -249,6 +275,76 @@ export function ProfilePiscine({piscine, user}: { piscine: any | null, user: any
                     </button>
                 </div>
             </form>
+
+            <div className="border-t-1 mt-2"/>
+            <h1 className="text-2xl font-black md:font-extrabold font-sans text-cente mt-2">
+                Régime
+            </h1>
+
+            <form className="p-2 flex flex-col gap-4">
+                <div className="flex items-end justify-between gap-5">
+                    <Input
+                        type="number"
+                        label="SIREN/SIRET"
+                        placeholder={piscine?.at(0).siren_siret}
+                        labelPlacement="outside"
+                    />
+                    <Link className="mb-2" showAnchorIcon href={url_siren_siret}>Justificatif</Link>
+                    <FontAwesomeIcon className="mb-3 text-primary cursor-pointer" icon={faPenToSquare}/>
+                </div>
+
+                <div className="flex mt-5 justify-end">
+                    <button
+                        type="submit"
+                        className="rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-400"
+                    >
+                        Valider
+                    </button>
+                </div>
+            </form>
+
+            <div className="border-t-1 mt-2"/>
+            <h1 className="text-2xl font-black md:font-extrabold font-sans text-cente mt-2">
+                Assurance professionnelle
+            </h1>
+
+            <form className="p-2 flex flex-col gap-4">
+                <div className="flex items-end justify-between gap-5">
+                    <Link className="mb-2" showAnchorIcon href={url_insurance}>Assurance professionnelle</Link>
+                    <FontAwesomeIcon className="mb-2 text-primary cursor-pointer" icon={faPenToSquare}/>
+                </div>
+
+                <div className="flex mt-5 justify-end">
+                    <button
+                        type="submit"
+                        className="rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-400"
+                    >
+                        Valider
+                    </button>
+                </div>
+            </form>
+
+            <div className="border-t-1 mt-2"/>
+            <h1 className="text-2xl font-black md:font-extrabold font-sans text-cente mt-2">
+                Carte professionnelle ou déclaration d’activité
+            </h1>
+
+            <form className="p-2 flex flex-col gap-4">
+                <div className="flex items-end justify-between gap-5">
+                    <Link className="mb-2" showAnchorIcon href={url_pro_card}>Carte professionnelle</Link>
+                    <FontAwesomeIcon className="mb-2 text-primary cursor-pointer" icon={faPenToSquare}/>
+                </div>
+
+                <div className="flex mt-5 justify-end">
+                    <button
+                        type="submit"
+                        className="rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-400"
+                    >
+                        Valider
+                    </button>
+                </div>
+            </form>
+
             <div className="border-t-1 mt-10"/>
             <h1 className="text-2xl font-black md:font-extrabold font-sans text-cente mt-2">
                 Déconnection
