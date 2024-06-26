@@ -254,7 +254,7 @@ export function Offers({offer}: { offer: any }) {
             }
         }
         fetchMission();
-    }, []);
+    }, [offer]);
 
     const [popupOpen, setIsOpen] = useState(false);
     const togglePopup = () => {
