@@ -115,6 +115,7 @@ export async function VacationTable({
     const supabase = createServerComponentClient({cookies})
 
     let isPassed = false
+    let isComing = state.includes('1')
     let selected_states = state
 
     if (state.includes('5')) {
@@ -125,6 +126,7 @@ export async function VacationTable({
             .join(',')
         isPassed = true
     }
+
     const stateFilter = selected_states != "" ? '(' + selected_states + ')' : '(0, 1, 2, 3, 4)'
 
     // const dateFilter: { date: Date } | {} = date !== null ? {date} : {};
@@ -143,14 +145,16 @@ export async function VacationTable({
         let endDate = new Date(date)
         endDate.setDate(endDate.getDate() + 1)
 
-        query = query.gte('offres.startDatetime', startDate?.toISOString())
-        query = query.lt('offres.startDatetime', endDate?.toISOString())
+        query = query.gte('startDatetime', startDate?.toISOString())
+        query = query.lt('startDatetime', endDate?.toISOString())
     }
 
-    // if (isPassed) {
-    //     const today = new Date()
-    //     query = query.lt('offres.endDatetime', today.toISOString())
-    // }
+    const today = new Date()
+    if (isPassed && !isComing) {
+        query = query.lt('startDatetime', today.toISOString())
+    } else if (isComing && !isPassed) {
+        query = query.gte('startDatetime', today.toISOString())
+    }
 
     const {data: offers} = await query
 
