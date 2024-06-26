@@ -501,6 +501,7 @@ export function StateCheckboxValidation({currentState}: { currentState: string[]
                 onChange={handleSearch}
             >
                 <CustomCheckbox value="0">Non pourvue</CustomCheckbox>
+                <CustomCheckbox value="5">Passée</CustomCheckbox>
                 <CustomCheckbox value="1">À venir</CustomCheckbox>
                 <CustomCheckbox value="2">Terminée</CustomCheckbox>
                 <CustomCheckbox value="4">Annulée</CustomCheckbox>

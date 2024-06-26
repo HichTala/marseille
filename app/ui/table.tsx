@@ -114,7 +114,18 @@ export async function VacationTable({
 }) {
     const supabase = createServerComponentClient({cookies})
 
-    const stateFilter = state != "" ? '(' + state + ')' : '(0, 1, 2, 3, 4)'
+    let isPassed = false
+    let selected_states = state
+
+    if (state.includes('5')) {
+        selected_states = state
+            .split(',')
+            .filter((element) => element !== '5')
+            .concat('1')
+            .join(',')
+        isPassed = true
+    }
+    const stateFilter = selected_states != "" ? '(' + selected_states + ')' : '(0, 1, 2, 3, 4)'
 
     // const dateFilter: { date: Date } | {} = date !== null ? {date} : {};
 
@@ -126,6 +137,7 @@ export async function VacationTable({
         .or("nom.ilike.%" + vacataire + "%" + ",prenom.ilike.%" + vacataire + "%", {referencedTable: 'vacataire'})
         .filter("state", "in", stateFilter)
 
+
     if (date){
         let startDate = new Date(date)
         let endDate = new Date(date)
@@ -134,6 +146,11 @@ export async function VacationTable({
         query = query.gte('offres.startDatetime', startDate?.toISOString())
         query = query.lt('offres.startDatetime', endDate?.toISOString())
     }
+
+    // if (isPassed) {
+    //     const today = new Date()
+    //     query = query.lt('offres.endDatetime', today.toISOString())
+    // }
 
     const {data: offers} = await query
 

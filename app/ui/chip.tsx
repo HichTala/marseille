@@ -134,7 +134,7 @@ export function ChipContainerPiscine({
     const pathname = usePathname();
     const {replace} = useRouter();
 
-    const states_name = ["Non pourvue", "À venir", "Terminée", "", "Annulée"]
+    const states_name = ["Non pourvue", "À venir", "Terminée", "", "Annulée", "Passée"]
 
     const closeVacataire = () => {
         const params = new URLSearchParams(searchParams);
@@ -157,7 +157,7 @@ export function ChipContainerPiscine({
         replace(`${pathname}?${params.toString()}`);
     };
 
-    const closeStates = [0, 1, 2, 3, 4].map(
+    const closeStates = [0, 1, 2, 3, 4, 5].map(
         (state) => (
             () => {
                 const params = new URLSearchParams(searchParams);
